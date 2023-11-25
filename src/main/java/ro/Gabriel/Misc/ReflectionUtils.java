@@ -2,10 +2,14 @@ package ro.Gabriel.Misc;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import ro.Gabriel.BuildBattle.Main;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class ReflectionUtils {
 
@@ -294,14 +298,6 @@ public final class ReflectionUtils {
         public static Class<?>[] getPrimitive(final Object[] objects) {
             final int length = (objects == null) ? 0 : objects.length;
             final Class<?>[] types = (Class<?>[])new Class[length];
-            for (int index = 0; index < length; ++index) {
-                if(objects[index] != null) {
-                    Main.log("&aobjects[index] != null: " + index);
-                } else {
-                    Main.log("&cobjects[index] == null" + index);
-                }
-                types[index] = getPrimitive(objects[index].getClass());
-            }
             return types;
         }
 

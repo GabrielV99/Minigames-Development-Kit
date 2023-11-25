@@ -7,18 +7,142 @@
     <groupId>ro.Gabriel</groupId>
     <artifactId>Minigames-Development-Kit</artifactId>
     <version>1.0</version>
+    <packaging>jar</packaging>
+
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>github</id>-->
+<!--            <name>GitHub GabrielV99 Apache Maven Packages</name>-->
+<!--            <url>https://maven.pkg.github.com/GabrielV99/Minigames-Development-Kit</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
+
+<!--    <developers>-->
+<!--        <developer>-->
+<!--            <name>Gabriel</name>-->
+<!--            <email>Gabriel_Vitza@yahoo.com</email>-->
+<!--            <organization>com.github.GabrielV99</organization>-->
+<!--            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>-->
+<!--        </developer>-->
+<!--    </developers>-->
+
+<!--    <scm>-->
+<!--        <connection>scm:git:git://github.com/GabrielV99/Minigames-Development-Kit.git</connection>-->
+<!--        <developerConnection>scm:git:https://github.com/GabrielV99/Minigames-Development-Kit.git-->
+<!--        </developerConnection>-->
+<!--        <url>https://github.com/GabrielV99/Minigames-Development-Kit</url>-->
+<!--        <tag>Minigames-Development-Kit</tag>-->
+<!--    </scm>-->
+
+<!--    <build>-->
+<!--        <pluginManagement>-->
+<!--            <plugins>-->
+
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-plugin-plugin</artifactId>-->
+<!--                    <version>3.6.0</version>-->
+<!--                    <configuration>-->
+<!--                        &lt;!&ndash; see http://jira.codehaus.org/browse/MNG-5346 &ndash;&gt;-->
+<!--                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-site-plugin</artifactId>-->
+<!--                    <version>3.9.1</version>-->
+<!--                </plugin>-->
+<!--            </plugins>-->
+<!--        </pluginManagement>-->
+
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.8.1</version>-->
+<!--                <configuration>-->
+<!--                    <source>8</source>-->
+<!--                    <target>8</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-release-plugin</artifactId>-->
+<!--                <version>3.0.0-M1</version>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
+
+
+
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub GabrielV99 Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/GabrielV99/Minigames-Development-Kit</url>
+        </repository>
+    </distributionManagement>
+    <developers>
+        <developer>
+            <name>GabrielV99</name>
+            <email>Gabriel_Vitza@yahoo.com</email>
+            <organization>com.github.GabrielV99</organization>
+            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/GabrielV99/Minigames-Development-Kit.git</connection>
+        <developerConnection>scm:git:https://github.com/GabrielV99/Minigames-Development-Kit.git
+        </developerConnection>
+        <url>https://github.com/GabrielV99/Minigames-Development-Kit</url>
+        <tag>Minigames-Development-Kit</tag>
+    </scm>
+
     <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>3.6.0</version>
+                    <configuration>
+                        <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.9.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
         </plugins>
     </build>
+
+
+
 
     <dependencies>
         <dependency>

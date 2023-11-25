@@ -20,7 +20,7 @@ public enum ServerType {
         return arena;
     }
 
-    public boolean match(ManagerClass classTag) {
+    /*public boolean match(ManagerClass classTag) {
         return match(classTag.bungee(), classTag.lobby(), classTag.arena());
     }
 
@@ -41,5 +41,5 @@ public enum ServerType {
         } catch (Exception e) {
             return ServerType.MULTI_ARENA;
         }
-    }
+    }*/
 }
