@@ -56,13 +56,13 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 loader.setAccessible(true);
 
                 Field description = c.getDeclaredField("description");
-                loader.setAccessible(true);
+                description.setAccessible(true);
 
                 Field dataFolder = c.getDeclaredField("dataFolder");
-                loader.setAccessible(true);
+                description.setAccessible(true);
 
                 Field file = c.getDeclaredField("file");
-                loader.setAccessible(true);
+                file.setAccessible(true);
 
 
                 Method m = JavaPlugin.class.getDeclaredMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
