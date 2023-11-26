@@ -7,7 +7,9 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import ro.Gabriel.Misc.ServerVersion;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class MinigamesDevelopmentKit extends JavaPlugin {
@@ -16,18 +18,18 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 
     private String prefix;
 
+    private List<Minigame> minigames;
+
     public void onEnable() {
         INSTANCE = this;
+        this.minigames = new ArrayList<>();
 
         ServerVersion.load();
-
 
         Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(plugin ->
                 plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName()) || plugin.equals(MinigamesDevelopmentKit.getInstance())
         ).forEach(plugin -> {
-
-            Bukkit.getPluginManager().enablePlugin(plugin);
-
+            this.minigames.add(new Minigame(plugin));
         });
     }
 
