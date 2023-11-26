@@ -1,0 +1,5 @@
+name: Minigames-Development-Kit
+version: '${project.version}'
+main: ro.Gabriel.Main.MinigamesDevelopmentKit
+api-version: 1.12
+authors: [ Gabriel ]
