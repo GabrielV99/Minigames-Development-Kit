@@ -5,8 +5,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
+import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +36,13 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
             //this.minigames.add(new Minigame().load(plugin));
             plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
 
-            this.minigames.add(new Minigame().load(plugin));
+            try {
+                ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), true, "initialize", plugin);
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            //this.minigames.add(new Minigame().load(plugin));
         });
     }
 
