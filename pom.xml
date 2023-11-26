@@ -85,14 +85,14 @@
             <url>https://maven.pkg.github.com/GabrielV99/Minigames-Development-Kit</url>
         </repository>
     </distributionManagement>
-    <developers>
-        <developer>
-            <name>GabrielV99</name>
-            <email>Gabriel_Vitza@yahoo.com</email>
-            <organization>com.github.GabrielV99</organization>
-            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>
-        </developer>
-    </developers>
+<!--    <developers>-->
+<!--        <developer>-->
+<!--            <name>GabrielV99</name>-->
+<!--            <email>Gabriel_Vitza@yahoo.com</email>-->
+<!--            <organization>com.github.GabrielV99</organization>-->
+<!--            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>-->
+<!--        </developer>-->
+<!--    </developers>-->
 
     <scm>
         <connection>scm:git:git://github.com/GabrielV99/Minigames-Development-Kit.git</connection>
