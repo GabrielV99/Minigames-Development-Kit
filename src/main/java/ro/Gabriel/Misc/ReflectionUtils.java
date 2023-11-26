@@ -317,6 +317,17 @@ public final class ReflectionUtils {
             for (int index = 0; index < primary.length; ++index) {
                 final Class<?> primaryClass = primary[index];
                 final Class<?> secondaryClass = secondary[index];
+
+                if(primaryClass == null) {
+                    System.out.println("primaryClass == null");
+                } else {
+                    System.out.println("primaryClass != null");
+                }
+                if(secondaryClass == null) {
+                    System.out.println("secondaryClass == null");
+                } else {
+                    System.out.println("secondaryClass != null");
+                }
                 if (!primaryClass.equals(secondaryClass) && !primaryClass.isAssignableFrom(secondaryClass)) {
                     return false;
                 }
