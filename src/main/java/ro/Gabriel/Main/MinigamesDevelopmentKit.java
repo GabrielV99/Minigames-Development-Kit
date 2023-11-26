@@ -68,7 +68,12 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 Method m = JavaPlugin.class.getDeclaredMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
                 m.setAccessible(true);
 
-                m.invoke(plugin, loader.get(classLoader), plugin.getServer(), description.get(classLoader), dataFolder.get(classLoader), file.get(classLoader), classLoader);
+                Object loaderValue = loader.get(classLoader);
+                Object descriptionValue = description.get(classLoader);
+                Object dataFolderValue = dataFolder.get(classLoader);
+                Object fileValue = file.get(classLoader);
+
+                //m.invoke(plugin, loader.get(classLoader), plugin.getServer(), description.get(classLoader), dataFolder.get(classLoader), file.get(classLoader), classLoader);
             } catch (Exception e) {
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
 
