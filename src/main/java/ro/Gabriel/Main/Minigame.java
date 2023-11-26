@@ -8,7 +8,7 @@ import ro.Gabriel.Class.ClassValidator;
 
 import java.util.HashMap;
 
-public class Minigame extends JavaPlugin {
+public class Minigame /*extends JavaPlugin*/ {
 
     private HashMap<Class<? extends ClassValidator>, ClassValidator> validators;
 
