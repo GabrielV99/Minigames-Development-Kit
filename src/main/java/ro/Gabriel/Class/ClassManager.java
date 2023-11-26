@@ -1,6 +1,8 @@
 package ro.Gabriel.Class;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
+import ro.Gabriel.Main.MinigamesDevelopmentKit;
 
 import java.util.HashMap;
 
@@ -10,6 +12,12 @@ public class ClassManager {
 
     public static void load(Plugin plugin) {
         ClassManager instance = getInstance();
+
+
+    }
+
+    public static void load() {
+        MinigamesDevelopmentKit.getInstance().getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&cLOADD()"));
 
 
     }

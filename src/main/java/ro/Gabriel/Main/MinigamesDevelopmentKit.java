@@ -21,15 +21,18 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
     private List<Minigame> minigames;
 
     public void onEnable() {
+        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4S-A ACTIVAT MDK!!!!!!!!!!!!!!!!!!!!! NAME: " + this.getDescription().getName()));
         INSTANCE = this;
         this.minigames = new ArrayList<>();
 
         ServerVersion.load();
 
-        Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(plugin ->
-                plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName()) || plugin.equals(MinigamesDevelopmentKit.getInstance())
+        Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin ->
+                plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName())
         ).forEach(plugin -> {
-            this.minigames.add(new Minigame(plugin));
+            //plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName()));
+
+            this.minigames.add(new Minigame().load(plugin));
         });
     }
 
