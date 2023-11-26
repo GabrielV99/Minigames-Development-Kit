@@ -3,9 +3,11 @@ package ro.Gabriel.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
@@ -47,9 +49,18 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 //                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
 //                m.setAccessible(true);
 //                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
-                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
+                SimplePluginManager simplePluginManager = new SimplePluginManager(Bukkit.getServer(), new SimpleCommandMap(Bukkit.getServer()));
 
                 Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+                ClassLoader classLoader = plugin.getClass().getClassLoader();
+
+                Field file = c.getDeclaredField("file");
+                file.setAccessible(true);
+
+                simplePluginManager.loadPlugin((File) file.get(classLoader));
+                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
+
+                /*Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
                 ClassLoader classLoader = plugin.getClass().getClassLoader();
 
                 Field loader = c.getDeclaredField("loader");
@@ -73,7 +84,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 Object dataFolderValue = dataFolder.get(classLoader);
                 Object fileValue = file.get(classLoader);
 
-                m.invoke(plugin, loaderValue, plugin.getServer(), descriptionValue, dataFolderValue, fileValue, classLoader);
+                m.invoke(plugin, loaderValue, plugin.getServer(), descriptionValue, dataFolderValue, fileValue, classLoader);*/
             } catch (Exception e) {
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
 
