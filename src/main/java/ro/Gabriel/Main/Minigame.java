@@ -8,7 +8,7 @@ import ro.Gabriel.Class.ClassValidator;
 
 import java.util.HashMap;
 
-public abstract class Minigame /*extends JavaPlugin*/ {
+public class Minigame extends JavaPlugin {
 
     private HashMap<Class<? extends ClassValidator>, ClassValidator> validators;
 
@@ -21,10 +21,7 @@ public abstract class Minigame /*extends JavaPlugin*/ {
 
     public Minigame load(Plugin plugin) {
         plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName()));
-        Bukkit.getPluginManager().enablePlugin(plugin);
+        //Bukkit.getPluginManager().enablePlugin(plugin);
         return this;
     }
-
-    public abstract void onEnable();
-    public abstract void onDisable();
 }

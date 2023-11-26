@@ -31,7 +31,6 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName())
         ).forEach(plugin -> {
             //plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName()));
-
             this.minigames.add(new Minigame().load(plugin));
         });
     }
