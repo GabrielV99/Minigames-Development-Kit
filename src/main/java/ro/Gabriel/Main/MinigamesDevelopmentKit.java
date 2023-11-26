@@ -37,6 +37,16 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
             plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
 
             try {
+                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
+
+            } catch (Exception e) {
+                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
+
+                e.printStackTrace();
+            }
+
+            try {
                 ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), false, "initialize", plugin);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
