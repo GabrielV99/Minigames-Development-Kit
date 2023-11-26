@@ -42,7 +42,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 
                 Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
                 m.setAccessible(true);
-                m.invoke(c, (JavaPlugin)plugin);
+                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
 
             } catch (Exception e) {
