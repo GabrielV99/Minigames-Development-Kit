@@ -85,19 +85,18 @@
             <url>https://maven.pkg.github.com/GabrielV99/Minigames-Development-Kit</url>
         </repository>
     </distributionManagement>
-<!--    <developers>-->
-<!--        <developer>-->
-<!--            <name>GabrielV99</name>-->
-<!--            <email>Gabriel_Vitza@yahoo.com</email>-->
-<!--            <organization>com.github.GabrielV99</organization>-->
-<!--            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>-->
-<!--        </developer>-->
-<!--    </developers>-->
+    <developers>
+        <developer>
+            <name>GabrielV99</name>
+            <email>Gabriel_Vitza@yahoo.com</email>
+            <organization>com.github.GabrielV99</organization>
+            <organizationUrl>https://github.com/GabrielV99/Minigames-Development-Kit</organizationUrl>
+        </developer>
+    </developers>
 
     <scm>
         <connection>scm:git:git://github.com/GabrielV99/Minigames-Development-Kit.git</connection>
-        <developerConnection>scm:git:https://github.com/GabrielV99/Minigames-Development-Kit.git
-        </developerConnection>
+        <developerConnection>scm:git:https://github.com/GabrielV99/Minigames-Development-Kit.git</developerConnection>
         <url>https://github.com/GabrielV99/Minigames-Development-Kit</url>
         <tag>Minigames-Development-Kit</tag>
     </scm>
@@ -105,7 +104,6 @@
     <build>
         <pluginManagement>
             <plugins>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
@@ -132,12 +130,20 @@
                     <target>8</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <altDeploymentRepository>github::default::https://maven.pkg.github.com/GabrielV99/Minigames-Development-Kit</altDeploymentRepository>
+                </configuration>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <version>3.3.0</version>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
