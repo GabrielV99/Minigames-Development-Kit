@@ -9,6 +9,7 @@ import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,10 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 
             try {
                 Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+
+                Method m = c.getMethod("initialize", JavaPlugin.class);
+                m.setAccessible(true);
+                m.invoke(c, (JavaPlugin)plugin);
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
 
             } catch (Exception e) {
@@ -46,11 +51,11 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 e.printStackTrace();
             }
 
-            try {
+            /*try {
                 ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), false, "initialize", plugin);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             //this.minigames.add(new Minigame().load(plugin));
         });
