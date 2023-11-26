@@ -45,15 +45,14 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 /*Method m = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
                 m.setAccessible(true);
                 m.invoke(plugin, true);*/
-
-                ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
-                //ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
-
-                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
                 for(Method m : JavaPlugin.class.getDeclaredMethods()) {
                     plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Aceasta este metoda: &5" + m));
 
                 }
+                ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
+                //ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
+
+                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
             } catch (Exception e) {
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
 
