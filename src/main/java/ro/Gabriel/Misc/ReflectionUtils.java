@@ -54,6 +54,7 @@ public final class ReflectionUtils {
         final Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
 
         for (final Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
+            System.out.println("Metoda: " + method);
             if (method.getName().equals(methodName) && DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
                 method.setAccessible(true);
                 return method;
