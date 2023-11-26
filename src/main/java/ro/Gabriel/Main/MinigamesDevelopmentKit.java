@@ -39,59 +39,12 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
         Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin ->
                 plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName())
         ).forEach(plugin -> {
-            //plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName()));
-            //this.minigames.add(new Minigame().load(plugin));
             plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
 
             try {
-//                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
-//
-//                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
-//                m.setAccessible(true);
-//                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
-                /*SimplePluginManager simplePluginManager = new SimplePluginManager(Bukkit.getServer(), new SimpleCommandMap(Bukkit.getServer()));
-
-                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
-                ClassLoader classLoader = plugin.getClass().getClassLoader();
-
-                Field file = c.getDeclaredField("file");
-                file.setAccessible(true);
-
-                simplePluginManager.loadPlugin((File) file.get(classLoader));
-*/
-                Method m = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
-                m.setAccessible(true);
-                m.invoke(plugin, true);
+                ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
 
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
-                // ((JavaPlugin)plugin).setNaggable();
-
-
-                /*Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
-                ClassLoader classLoader = plugin.getClass().getClassLoader();
-
-                Field loader = c.getDeclaredField("loader");
-                loader.setAccessible(true);
-
-                Field description = c.getDeclaredField("description");
-                description.setAccessible(true);
-
-                Field dataFolder = c.getDeclaredField("dataFolder");
-                dataFolder.setAccessible(true);
-
-                Field file = c.getDeclaredField("file");
-                file.setAccessible(true);
-
-
-                Method m = JavaPlugin.class.getDeclaredMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
-                m.setAccessible(true);
-
-                Object loaderValue = loader.get(classLoader);
-                Object descriptionValue = description.get(classLoader);
-                Object dataFolderValue = dataFolder.get(classLoader);
-                Object fileValue = file.get(classLoader);
-
-                m.invoke(plugin, loaderValue, plugin.getServer(), descriptionValue, dataFolderValue, fileValue, classLoader);*/
             } catch (Exception e) {
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
 
