@@ -59,7 +59,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 description.setAccessible(true);
 
                 Field dataFolder = c.getDeclaredField("dataFolder");
-                description.setAccessible(true);
+                dataFolder.setAccessible(true);
 
                 Field file = c.getDeclaredField("file");
                 file.setAccessible(true);
