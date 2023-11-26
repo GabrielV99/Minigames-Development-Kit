@@ -46,8 +46,8 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 m.setAccessible(true);
                 m.invoke(plugin, true);*/
 
-                //ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
-                ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
+                ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
+                //ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
 
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
             } catch (Exception e) {
