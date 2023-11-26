@@ -49,7 +49,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 //                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
 //                m.setAccessible(true);
 //                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
-                SimplePluginManager simplePluginManager = new SimplePluginManager(Bukkit.getServer(), new SimpleCommandMap(Bukkit.getServer()));
+                /*SimplePluginManager simplePluginManager = new SimplePluginManager(Bukkit.getServer(), new SimpleCommandMap(Bukkit.getServer()));
 
                 Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
                 ClassLoader classLoader = plugin.getClass().getClassLoader();
@@ -58,7 +58,14 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 file.setAccessible(true);
 
                 simplePluginManager.loadPlugin((File) file.get(classLoader));
+*/
+                Method m = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
+                m.setAccessible(true);
+                m.invoke(plugin, true);
+
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
+                // ((JavaPlugin)plugin).setNaggable();
+
 
                 /*Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
                 ClassLoader classLoader = plugin.getClass().getClassLoader();
