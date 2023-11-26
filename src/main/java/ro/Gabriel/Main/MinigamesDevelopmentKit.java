@@ -45,10 +45,10 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 /*Method m = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
                 m.setAccessible(true);
                 m.invoke(plugin, true);*/
-                for(Method m : JavaPlugin.class.getDeclaredMethods()) {
-                    plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Aceasta este metoda: &5" + m));
-
-                }
+//                for(Method m : JavaPlugin.class.getDeclaredMethods()) {
+//                    plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Aceasta este metoda: &5" + m));
+//
+//                }
                 ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
                 //ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
 
