@@ -7,7 +7,7 @@
     <groupId>ro.Gabriel</groupId>
     <artifactId>Minigames-Development-Kit</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
 
 <!--    <distributionManagement>-->
 <!--        <repository>-->
