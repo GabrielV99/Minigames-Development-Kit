@@ -2,12 +2,16 @@ package ro.Gabriel.Main;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -38,13 +42,33 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
             plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
 
             try {
-                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
-
-                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
-                m.setAccessible(true);
-                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
+//                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+//
+//                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
+//                m.setAccessible(true);
+//                m.invoke(plugin.getClass().getClassLoader(), (JavaPlugin)plugin);
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
 
+                Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
+                ClassLoader classLoader = plugin.getClass().getClassLoader();
+
+                Field loader = c.getDeclaredField("loader");
+                loader.setAccessible(true);
+
+                Field description = c.getDeclaredField("description");
+                loader.setAccessible(true);
+
+                Field dataFolder = c.getDeclaredField("dataFolder");
+                loader.setAccessible(true);
+
+                Field file = c.getDeclaredField("file");
+                loader.setAccessible(true);
+
+
+                Method m = JavaPlugin.class.getMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
+                m.setAccessible(true);
+
+                //m.invoke(plugin, loader.get(classLoader), plugin.getServer(), description, dataFolder, file, classLoader);
             } catch (Exception e) {
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
 
