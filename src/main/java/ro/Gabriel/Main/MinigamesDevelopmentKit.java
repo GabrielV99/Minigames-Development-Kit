@@ -37,7 +37,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
             plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
 
             try {
-                ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), true, "initialize", plugin);
+                ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), false, "initialize", plugin);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
