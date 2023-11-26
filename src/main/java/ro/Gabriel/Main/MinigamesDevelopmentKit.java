@@ -65,7 +65,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
                 loader.setAccessible(true);
 
 
-                Method m = JavaPlugin.class.getMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
+                Method m = JavaPlugin.class.getDeclaredMethod("init", PluginLoader.class, Server.class, PluginDescriptionFile.class, File.class, File.class, ClassLoader.class);
                 m.setAccessible(true);
 
                 //m.invoke(plugin, loader.get(classLoader), plugin.getServer(), description, dataFolder, file, classLoader);
