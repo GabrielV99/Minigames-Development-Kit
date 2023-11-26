@@ -40,7 +40,7 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
             try {
                 Class<?> c = Class.forName("org.bukkit.plugin.java.PluginClassLoader");
 
-                Method m = c.getMethod("initialize", JavaPlugin.class);
+                Method m = c.getDeclaredMethod("initialize", JavaPlugin.class);
                 m.setAccessible(true);
                 m.invoke(c, (JavaPlugin)plugin);
                 plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
