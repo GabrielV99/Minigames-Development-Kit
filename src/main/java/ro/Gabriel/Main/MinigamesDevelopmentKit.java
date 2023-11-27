@@ -1,25 +1,13 @@
 package ro.Gabriel.Main;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class MinigamesDevelopmentKit extends Minigame {
 
@@ -28,8 +16,10 @@ public class MinigamesDevelopmentKit extends Minigame {
     private List<Minigame> minigames;
 
     public void onEnable() {
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&4S-A ACTIVAT MDK!!!!!!!!!!!!!!!!!!!!! NAME: " + this.getDescription().getName()));
         INSTANCE = this;
+
+        this.log("&aStart plugin...");
+
         this.minigames = new ArrayList<>();
 
         ServerVersion.load();
@@ -69,6 +59,7 @@ public class MinigamesDevelopmentKit extends Minigame {
                 ReflectionUtils.invokeMethod(plugin, JavaPlugin.class, "setEnabled", true, new Object[]{true});
                 this.log("&aThe &e" + plugin.getName() + " &aminigame successfully enabled!");
             } catch (Exception e) {
+                this.log("&cThe &4" + plugin.getName() + " &cminigame wans not enabled!");
                 e.printStackTrace();
             }
         });
