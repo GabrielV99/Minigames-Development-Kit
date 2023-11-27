@@ -3,10 +3,7 @@ package ro.Gabriel.Misc;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +35,33 @@ public final class ReflectionUtils {
         return instantiateObject(packageType.getClass(className), arguments);
     }
 
+    public static boolean methodExist(Class<?> clazz, String name, boolean declared, boolean isStatic) {
+        for(Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
+            if(name.equals(method.getName()) && (!isStatic || Modifier.isStatic(method.getModifiers()))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean fieldExist(Class<?> clazz, String name, boolean declared, boolean isStatic) {
+        for(Field field : declared ? clazz.getDeclaredFields() : clazz.getFields()) {
+            if(name.equals(field.getName()) && (!isStatic || Modifier.isStatic(field.getModifiers()))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Method getMethod(Class<?> clazz, String methodName, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
         for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
             if (!method.getName().equals(methodName) || !DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
                 continue;
             }
+            method.setAccessible(true);
             return method;
         }
         throw new NoSuchMethodException("There is no such method in this class with the specified name and parameter types");

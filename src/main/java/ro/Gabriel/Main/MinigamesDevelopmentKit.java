@@ -21,11 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class MinigamesDevelopmentKit extends JavaPlugin {
+public class MinigamesDevelopmentKit extends Minigame {
 
     private static MinigamesDevelopmentKit INSTANCE;
-
-    private String prefix;
 
     private List<Minigame> minigames;
 
@@ -36,83 +34,47 @@ public class MinigamesDevelopmentKit extends JavaPlugin {
 
         ServerVersion.load();
 
-        Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin ->
-                plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName())
-        ).forEach(plugin -> {
-            plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a activat pluginul &5" + plugin.getName() + "isEnabled: &e" + this.getServer().getPluginManager().isPluginEnabled(plugin)));
+        Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin -> plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName()))
+                .filter(plugin -> {
+                    String name = plugin.getName();
 
+                    this.log("&aTrying to load &e" + name + " &aminigame...");
+                    try {
+                        boolean extendsMinigame, isField, isMethod;
+
+                        Class<?> clazz = Class.forName(plugin.getDescription().getMain());
+
+                        if(!(extendsMinigame = Minigame.class.isAssignableFrom(clazz))) {
+                            this.log("&cYour &4" + name + " &cmain class not extends &4Minigame &cclass!");
+                            return false;
+                        }
+
+                        if(!(isField = ReflectionUtils.fieldExist(clazz, "instance", true, true) && clazz.getDeclaredField("instance").getType().equals(clazz))) {
+                            this.log("&cYour &4" + name + " &cmain class must contain a static field with name 'instance' of the main class type!");
+                            return false;
+                        }
+
+                        if(!(isMethod = ReflectionUtils.methodExist(clazz, "getInstance", true, true) && clazz.getDeclaredMethod("getInstance").getReturnType().equals(clazz))) {
+                            this.log("&cYour &4" + name + " &cmain class must contain a static method with name 'getInstance' that return main class type!");
+                            return false;
+                        }
+
+                        return extendsMinigame && isField && isMethod;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+        }).forEach(plugin -> {
             try {
-                /*Method m = JavaPlugin.class.getDeclaredMethod("setEnabled", boolean.class);
-                m.setAccessible(true);
-                m.invoke(plugin, true);*/
-//                for(Method m : JavaPlugin.class.getDeclaredMethods()) {
-//                    plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Aceasta este metoda: &5" + m));
-//
-//                }
-                //ReflectionUtils.invokeMethod(plugin, true, JavaPlugin.class, "setEnabled", true);
-                //ReflectionUtils.invokeMethod(plugin, true, "setEnabled", true);
-                //ReflectionUtils.invokeMethod(plugin, "setEnabled", true, true);
-                ReflectionUtils.invokeMethod(plugin, "setEnabled", true, new Object[]{true});
-                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1S-a putut obtine clasa final &5PluginClassLoader"));
+                ReflectionUtils.invokeMethod(plugin, JavaPlugin.class, "setEnabled", true, new Object[]{true});
+                this.log("&aThe &e" + plugin.getName() + " &aminigame successfully enabled!");
             } catch (Exception e) {
-                plugin.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&1Nu s-a putut obtine clasa final &cPluginClassLoader"));
-
                 e.printStackTrace();
             }
-
-            /*try {
-                ReflectionUtils.invokeMethod(plugin.getClass().getClassLoader(), false, "initialize", plugin);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }*/
-
-            //this.minigames.add(new Minigame().load(plugin));
         });
     }
 
     public static MinigamesDevelopmentKit getInstance() {
         return INSTANCE;
-    }
-
-    public static String getPluginName() {
-        return getInstance().getName();
-    }
-
-    public static PluginLoader getLoader() {
-        return INSTANCE.getPluginLoader();
-    }
-
-    public static String getPrefix() {
-        return INSTANCE.prefix != null ? INSTANCE.prefix : "";
-    }
-
-    public static void log(String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(getPrefix() + ChatColor.translateAlternateColorCodes('&', message));
-    }
-    public static void sendMessage(String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-    }
-
-
-    public static void stop() {
-        MinigamesDevelopmentKit.log("&cStop the server...");
-        getInstance().getServer().savePlayers();
-        getInstance().getServer().shutdown();
-    }
-
-    public static void disable() {
-        MinigamesDevelopmentKit.log("&cDisable this plugin...");
-        getInstance().getPluginLoader().disablePlugin(MinigamesDevelopmentKit.getInstance());
-    }
-
-
-    public static void runTaskAsynchronously(Runnable task) {
-        INSTANCE.getServer().getScheduler().runTaskAsynchronously(MinigamesDevelopmentKit.getInstance(), task);
-    }
-
-    private Stream<Plugin> get() {
-        return Arrays.stream(Bukkit.getPluginManager().getPlugins()).filter(plugin ->
-                plugin.getDescription().getDepend().contains(this.getDescription().getName()) || plugin.equals(this)
-        );
     }
 }
