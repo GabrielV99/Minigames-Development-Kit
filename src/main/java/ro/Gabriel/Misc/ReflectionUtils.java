@@ -38,9 +38,9 @@ public final class ReflectionUtils {
         return instantiateObject(packageType.getClass(className), arguments);
     }
 
-    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public static Method getMethod(Class<?> clazz, String methodName, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
-        for (Method method : clazz.getMethods()) {
+        for (Method method : declared ? clazz.getDeclaredMethods() : clazz.getMethods()) {
             if (!method.getName().equals(methodName) || !DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
                 continue;
             }
@@ -50,15 +50,27 @@ public final class ReflectionUtils {
     }
 
     public static Method getMethod(String className, PackageType packageType, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
-        return getMethod(packageType.getClass(className), methodName, parameterTypes);
+        return getMethod(packageType.getClass(className), methodName, false, parameterTypes);
     }
 
     public static Object invokeMethod(Object instance, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        return getMethod(instance.getClass(), methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+        return getMethod(instance.getClass(), methodName, false, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
 
     public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        return getMethod(clazz, methodName, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+        return getMethod(clazz, methodName, false, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+    }
+
+    public static Method getMethod(String className, PackageType packageType, String methodName, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        return getMethod(packageType.getClass(className), methodName, declared, parameterTypes);
+    }
+
+    public static Object invokeMethod(Object instance, String methodName, boolean declared, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getMethod(instance.getClass(), methodName, declared, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+    }
+
+    public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, boolean declared, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getMethod(clazz, methodName, declared, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
 
     public static Object invokeMethod(Object instance, String className, PackageType packageType, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
