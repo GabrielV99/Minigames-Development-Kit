@@ -11,7 +11,7 @@ import java.util.List;
 
 public class MinigamesDevelopmentKit extends Minigame {
 
-    private static MinigamesDevelopmentKit INSTANCE;
+    protected static MinigamesDevelopmentKit INSTANCE;
 
     private List<Minigame> minigames;
 
@@ -24,7 +24,7 @@ public class MinigamesDevelopmentKit extends Minigame {
 
         ServerVersion.load();
 
-        Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin -> plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName()))
+        Arrays.stream(this.getServer().getPluginManager().getPlugins()).filter(plugin -> plugin.getDescription().getDepend().contains(INSTANCE.getDescription().getName()) && !plugin.getName().equals(this.getName()))
                 .filter(plugin -> {
                     String name = plugin.getName();
 

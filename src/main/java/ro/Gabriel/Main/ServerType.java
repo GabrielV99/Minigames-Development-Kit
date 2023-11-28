@@ -33,7 +33,7 @@ public enum ServerType {
                 || (bungee == Main.isBungeeCord() && lobby && arena)
                 || (Main.isBungeeCord() == bungee && this.isLobby() == lobby && this.isArena() == arena)
                 ||(bungee && lobby && arena);
-    }
+    }*/
 
     public static ServerType of(Object value) {
         try {
@@ -41,5 +41,5 @@ public enum ServerType {
         } catch (Exception e) {
             return ServerType.MULTI_ARENA;
         }
-    }*/
+    }
 }

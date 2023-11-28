@@ -2,7 +2,9 @@ package ro.Gabriel.Misc;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import ro.Gabriel.Class.ClassValidator;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +14,21 @@ public final class ReflectionUtils {
 
     private ReflectionUtils() {}
 
-    public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public static boolean extendsClass(Class<?> clazz, Class<?> extension) {
+        return clazz != extension && extension.isAssignableFrom(clazz);
+    }
+
+    public static boolean isInterface(Class<?> clazz) {
+        return clazz.isInterface();
+    }
+
+    public static boolean isAnnotated(AnnotatedElement clazz, Class<? extends Annotation> annotation) {
+        return clazz.isAnnotationPresent(annotation);
+    }
+
+    public static Constructor<?> getConstructor(Class<?> clazz, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
-        for (Constructor<?> constructor : clazz.getConstructors()) {
+        for (Constructor<?> constructor : declared ? clazz.getDeclaredConstructors() : clazz.getConstructors()) {
             if (!DataType.compare(DataType.getPrimitive(constructor.getParameterTypes()), primitiveTypes)) {
                 continue;
             }
@@ -24,11 +38,27 @@ public final class ReflectionUtils {
     }
 
     public static Constructor<?> getConstructor(String className, PackageType packageType, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
-        return getConstructor(packageType.getClass(className), parameterTypes);
+        return getConstructor(packageType.getClass(className), false, parameterTypes);
+    }
+
+    public static Constructor<?> getConstructor(String className, boolean declared, PackageType packageType, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        return getConstructor(packageType.getClass(className), declared, parameterTypes);
+    }
+
+    public static Class<?> getClass(String className) throws ClassNotFoundException {
+        return Class.forName(className);
+    }
+
+    public static Class<?> getClass(String className, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
+        return Class.forName(className, initialize, classLoader);
     }
 
     public static Object instantiateObject(Class<?> clazz, Object... arguments) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
-        return getConstructor(clazz, DataType.getPrimitive(arguments)).newInstance(arguments);
+        return getConstructor(clazz, false, DataType.getPrimitive(arguments)).newInstance(arguments);
+    }
+
+    public static Object instantiateObject(Class<?> clazz, boolean declared, Object... arguments) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+        return getConstructor(clazz, declared, DataType.getPrimitive(arguments)).newInstance(arguments);
     }
 
     public static Object instantiateObject(String className, PackageType packageType, Object... arguments) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
