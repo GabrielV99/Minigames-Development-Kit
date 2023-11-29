@@ -77,4 +77,8 @@ public class FileUtils {
     public static void createFile(Minigame minigame, String path) {
         getFile(minigame, path, false);
     }
+
+    public static boolean fileExist(Minigame minigame, String path) {
+       return new File(minigame.getMainStoragePath() + path + (!path.contains(".") ? FileUtils.getFileExtension(path) : "")).exists();
+    }
 }

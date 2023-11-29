@@ -1,5 +1,6 @@
 package ro.Gabriel.Storage.DataStorage;
 
+import ro.Gabriel.Main.MinigamesDevelopmentKit;
 import ro.Gabriel.Storage.DataStorage.Implementations.FailedDataStorage;
 import ro.Gabriel.Class.Validators.DataStorageValidator;
 import ro.Gabriel.Misc.ReflectionUtils;
@@ -54,7 +55,7 @@ public abstract class DataStorage {
         try {
             File file = FileUtils.getFile(minigame, path, resource);
             if(file != null) {
-                return (DataStorage) ReflectionUtils.getConstructor(minigame.searchClasses(DataStorageValidator.class, file.toString().substring(file.toString().lastIndexOf(".") + 1)).get(0), false, File.class).newInstance(file);
+                return (DataStorage) ReflectionUtils.getConstructor(Minigame.getMDKInstance().searchClasses(DataStorageValidator.class, file.toString().substring(file.toString().lastIndexOf(".") + 1)).get(0), false, File.class).newInstance(file);
             }
             return getFailedDataStorage();
         } catch (Exception e) {
