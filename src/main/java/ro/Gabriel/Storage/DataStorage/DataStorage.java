@@ -43,6 +43,19 @@ public abstract class DataStorage {
 
     public abstract Set<String> getKeys(boolean deep);
 
+    public Set<String> getKeys() {
+        return getKeys(false);
+    }
+
+    public Set<String> getKeys(String path) {
+        return this.getKeys(path, false);
+    }
+
+    public Set<String> getKeys(String path, boolean deep) {
+        DataStorage section = this.getSection(path);
+        return section != null ? section.getKeys(deep) : null;
+    }
+
     public abstract void set(String path, Object value, boolean saveAfter);
 
     public abstract void save();
@@ -55,7 +68,7 @@ public abstract class DataStorage {
         try {
             File file = FileUtils.getFile(minigame, path, resource);
             if(file != null) {
-                return (DataStorage) ReflectionUtils.getConstructor(Minigame.getMDKInstance().searchClasses(DataStorageValidator.class, file.toString().substring(file.toString().lastIndexOf(".") + 1)).get(0), false, File.class).newInstance(file);
+                return (DataStorage) ReflectionUtils.getConstructor(minigame.getBasePluginInstance().searchClasses(DataStorageValidator.class, file.toString().substring(file.toString().lastIndexOf(".") + 1)).get(0), false, File.class).newInstance(file);
             }
             return getFailedDataStorage();
         } catch (Exception e) {

@@ -4,7 +4,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.ConfigurationSection;
 
-import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
 import ro.Gabriel.Storage.Annotations.StorageType;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
 
@@ -27,17 +26,22 @@ public class YmlDataStorage extends DataStorage {
         return fileConfiguration.contains(path);
     }
 
-    private YmlDataStorage(DataStorage baseFileStorage, String path) {
+    private YmlDataStorage(DataStorage baseFileStorage, String path) throws Exception {
         super(baseFileStorage.getFile());
         this.fileConfiguration = ((YmlDataStorage)baseFileStorage).fileConfiguration.getConfigurationSection(path);
         if(this.fileConfiguration == null) {
-            this.fileConfiguration = ((YmlDataStorage) baseFileStorage).fileConfiguration;
+            throw new Exception("path is null...");
+            //this.fileConfiguration = ((YmlDataStorage) baseFileStorage).fileConfiguration;
         }
     }
 
     @Override
     public DataStorage getSection(String path) {
-        return new YmlDataStorage(this, path);
+        try {
+            return new YmlDataStorage(this, path);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -47,14 +51,12 @@ public class YmlDataStorage extends DataStorage {
 
     @Override
     public String getString(String path) {
-        String value = this.fileConfiguration.getString(path);
-        return value != null ? value : DataDefaultValues.get(String.class);
+        return this.fileConfiguration.getString(path);
     }
 
     @Override
     public char getChar(String path) {
-        String value = this.fileConfiguration.getString(path);
-        return value != null ? value.charAt(0) : DataDefaultValues.get(char.class);
+        return this.fileConfiguration.getString(path).charAt(0);
     }
 
     @Override

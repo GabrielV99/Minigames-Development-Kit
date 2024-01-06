@@ -3,6 +3,7 @@ package ro.Gabriel.Misc;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ro.Gabriel.Class.ClassValidator;
+import ro.Gabriel.Main.Minigame;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -14,19 +15,7 @@ public final class ReflectionUtils {
 
     private ReflectionUtils() {}
 
-    public static boolean extendsClass(Class<?> clazz, Class<?> extension) {
-        return clazz != extension && extension.isAssignableFrom(clazz);
-    }
-
-    public static boolean isInterface(Class<?> clazz) {
-        return clazz.isInterface();
-    }
-
-    public static boolean isAnnotated(AnnotatedElement clazz, Class<? extends Annotation> annotation) {
-        return clazz.isAnnotationPresent(annotation);
-    }
-
-    public static Constructor<?> getConstructor(Class<?> clazz, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public static Constructor<?> getConstructor(Class<?> clazz, boolean declared, Class<?>... parameterTypes) {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
         for (Constructor<?> constructor : declared ? clazz.getDeclaredConstructors() : clazz.getConstructors()) {
             if (!DataType.compare(DataType.getPrimitive(constructor.getParameterTypes()), primitiveTypes)) {
@@ -34,7 +23,8 @@ public final class ReflectionUtils {
             }
             return constructor;
         }
-        throw new NoSuchMethodException("There is no such constructor in this class with the specified parameter types");
+        return null;
+        //throw new NoSuchMethodException("There is no such constructor in this class with the specified parameter types");
     }
 
     public static Constructor<?> getConstructor(String className, PackageType packageType, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
@@ -101,6 +91,10 @@ public final class ReflectionUtils {
         return getMethod(packageType.getClass(className), methodName, false, parameterTypes);
     }
 
+    public static Method getMethod(String className, PackageType packageType, String methodName, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
+        return getMethod(packageType.getClass(className), methodName, declared, parameterTypes);
+    }
+
     public static Object invokeMethod(Object instance, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
         return getMethod(instance.getClass(), methodName, false, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
@@ -109,15 +103,11 @@ public final class ReflectionUtils {
         return getMethod(clazz, methodName, false, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
 
-    public static Method getMethod(String className, PackageType packageType, String methodName, boolean declared, Class<?>... parameterTypes) throws NoSuchMethodException, ClassNotFoundException {
-        return getMethod(packageType.getClass(className), methodName, declared, parameterTypes);
-    }
-
-    public static Object invokeMethod(Object instance, String methodName, boolean declared, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+    public static Object invokeMethod(Object instance, boolean declared, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
         return getMethod(instance.getClass(), methodName, declared, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
 
-    public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, boolean declared, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+    public static Object invokeMethod(Object instance, Class<?> clazz, boolean declared, String methodName, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
         return getMethod(clazz, methodName, declared, DataType.getPrimitive(arguments)).invoke(instance, arguments);
     }
 
@@ -309,3 +299,7 @@ public final class ReflectionUtils {
         }
     }
 }
+
+//    public static Object invokeMethod(Object instance, Class<?> clazz, String methodName, boolean declared, Object... arguments) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
+//        return getMethod(clazz, methodName, declared, DataType.getPrimitive(arguments)).invoke(instance, arguments);
+//    } //MinigamesDevelopmentKit, ClassScanner

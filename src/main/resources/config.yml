@@ -4,6 +4,10 @@ alt-color-code: '&'
 is-prefix: true
 prefix: '&e[&6MinigamesDevelopmentKit&e] '
 
+files-path:
+  config-path: ''
+  language-path: 'Language'
+
 database:
   type: SQLite
   database: database

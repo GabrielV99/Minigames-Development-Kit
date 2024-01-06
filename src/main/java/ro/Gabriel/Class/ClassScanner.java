@@ -34,14 +34,14 @@ public class ClassScanner {
         List<Class<? extends T>> classes = new ArrayList<>();
 
         try {
-            JarFile jarFile = new JarFile((File) ReflectionUtils.invokeMethod(plugin, JavaPlugin.class, "getFile", true, null));
+            JarFile jarFile = new JarFile((File) ReflectionUtils.invokeMethod(plugin, JavaPlugin.class, true, "getFile"));
             jarFile.stream().forEach(entry -> {
                 if (!entry.isDirectory()) {
                     String name = entry.getName();
                     String className = name.replace('/', '.').substring(0, name.length() - 6);
                     try {
                         Class<? extends T> clazz = (Class<? extends T>) ReflectionUtils.getClass(className, false, plugin.getClass().getClassLoader());
-                        if(ReflectionUtils.extendsClass(clazz, type)) {
+                        if(ClassUtils.extendsClass(clazz, type)) {
                             classes.add(clazz);
                         }
                     } catch (ClassNotFoundException ignored) {  }

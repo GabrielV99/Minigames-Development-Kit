@@ -1,10 +1,15 @@
 package ro.Gabriel;
 
-import ro.Gabriel.Main.MinigamesDevelopmentKit;
+import org.bukkit.event.player.PlayerJoinEvent;
+import ro.Gabriel.Listener.CustomListener;
 
-public class test {
+public class test extends CustomListener<PlayerJoinEvent> {
 
-    public static void test() {
-        MinigamesDevelopmentKit mkd;
+    @Override
+    public void run(PlayerJoinEvent event) {
+        //SpigotUser user = new SpigotUser(minigame, event.getPlayer(), "en"){};
+
+
+
     }
 }
