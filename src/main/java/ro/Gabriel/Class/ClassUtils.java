@@ -19,8 +19,8 @@ public class ClassUtils {
         return clazz.isAnnotationPresent(annotation);
     }
 
-    public static <T extends Annotation> T getAnnotation(Class<?> clazz, Class<T> annotation) {
-        return clazz.getAnnotation(annotation);
+    public static <T extends Annotation> T getAnnotation(AnnotatedElement element, Class<T> annotation) {
+        return element.getAnnotation(annotation);
     }
 
     public static <T> T getEnumValue(Class<T> enumClass, String id) {

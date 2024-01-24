@@ -1,12 +1,9 @@
 package ro.Gabriel.Managers;
 
-import org.bukkit.plugin.Plugin;
-import ro.Gabriel.Class.ClassScanner;
-import ro.Gabriel.Class.ClassUtils;
 import ro.Gabriel.Class.Validators.ManagerClassValidator;
-import ro.Gabriel.Main.Minigame;
-import ro.Gabriel.Main.MinigamesDevelopmentKit;
 import ro.Gabriel.Misc.ReflectionUtils;
+import ro.Gabriel.Class.ClassUtils;
+import ro.Gabriel.Main.Minigame;
 
 import java.util.stream.Stream;
 

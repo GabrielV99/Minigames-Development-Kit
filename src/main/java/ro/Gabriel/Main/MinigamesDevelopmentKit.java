@@ -6,13 +6,11 @@ import ro.Gabriel.Listener.ListenerManager;
 import ro.Gabriel.Managers.ManagersProcessor;
 import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Misc.ServerVersion;
-import ro.Gabriel.Repository.Repository;
+import ro.Gabriel.Repository.Repositories.UserRepository;
 import ro.Gabriel.User.SpigotUser;
+import ro.Gabriel.User.SpigotUserRepository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class MinigamesDevelopmentKit extends Minigame {
 
@@ -21,31 +19,23 @@ public final class MinigamesDevelopmentKit extends Minigame {
     private List<Minigame> minigames;
 
     protected ListenerManager listenerManager;
-
-//    MinigamesDevelopmentKit() {
-//        listenerManager = new ListenerManager(this);
-//    }
-
-    //private ListenerManager listenerManager = new ListenerManager();
+    private UserRepository<SpigotUser> userRepository;
 
     @Override
-    public Repository<UUID, SpigotUser> getUserRepository() {
-        return new Repository<UUID, SpigotUser>() {
-            @Override
-            public SpigotUser registerEntity(UUID id) {
-                MinigamesDevelopmentKit.this.log("&4AsyncPlayerPreLoginEvent ... 100: " + id);
-
-                return new SpigotUser(MinigamesDevelopmentKit.this, id, null);
-            }
-        };
+    public UserRepository<SpigotUser> getUserRepository() {
+        return this.userRepository;
     }
 
     public void onEnable() {
+        //System.out.println("MainThreadID: " + Thread.currentThread().getId());
+
         INSTANCE = this;
 
         this.log("&aStart plugin...");
 
         this.minigames = new ArrayList<>();
+
+        this.userRepository = new SpigotUserRepository(this);
 
         ServerVersion.load();
         ManagersProcessor.loadManagers(this);
@@ -94,6 +84,21 @@ public final class MinigamesDevelopmentKit extends Minigame {
                 e.printStackTrace();
             }
         });
+
+//        this.getServer().getScheduler().runTaskTimer(this, () -> {
+//            Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&aserverul ruleaza!"));
+//        }, 20L, 20L);
+
+
+        /*Pentru tool-ul de lobby in care vei putea sa selectezi language-ul dintr-un meniu
+        * - Daca acel tool se va afla pe un server nu 'n' pluginuri secundare in care se va afla si MDK(obligatoriu):
+        *       * Fara necesitatea unei baze de date, se vor itera toate pluginurile(inclusiv MDK) si se vor putea identifica locale-urile si sursa lor(prin sursa se intelege pluginul in care au fost declarate)
+        *       * In cazul in care avem o baza de date valabila, toate pluginurile(inclusiv MDK) vor trimite catre un table din baza de date locale-urile si sursa lor(prin sursa se intelege pluginul in care au fost declarate)
+        *       aici vreau sa fac o precizare: Daca pluginul este bungee si de tip arena, sursa nu va fi serverul in sine, ci lobby-ul aferent acelui server de tip bungee si de tip arena(deoarece fiecare server va avea un obiect
+        *       de tip 'Server" care va reprezenta lobby-ul... de Ex. un server de arene va avea un obiect de tip 'Server' care va reprezenta serverul de lobby doar pentru acel mod de joc, iar ma departe lobby-ul acelui mod de joc va
+        *       avea si el la randul un un alt obiect de tip 'Server' care va reprezenta lobby-ul marec adica cel principal).
+        *
+        * */
     }
 
     public static MinigamesDevelopmentKit getInstance() {

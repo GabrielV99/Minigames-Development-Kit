@@ -1,7 +1,5 @@
 package ro.Gabriel.Storage;
 
-import org.bukkit.ChatColor;
-
 import ro.Gabriel.Storage.DataStorage.Implementations.YmlDataStorage;
 import ro.Gabriel.Main.Minigame;
 

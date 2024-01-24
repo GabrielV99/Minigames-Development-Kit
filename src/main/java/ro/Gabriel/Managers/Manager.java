@@ -1,7 +1,5 @@
 package ro.Gabriel.Managers;
 
-import ro.Gabriel.Main.Minigame;
+import ro.Gabriel.Main.IPluginInstance;
 
-public interface Manager {
-    Minigame getMainInstance();
-}
+public interface Manager extends IPluginInstance { }

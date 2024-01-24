@@ -8,15 +8,16 @@ import ro.Gabriel.Main.Config.FilePath;
 import ro.Gabriel.Managers.Manager;
 import ro.Gabriel.Main.Minigame;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class LanguageManager implements Manager {
 
-    private final Minigame minigame;
-    private final Map<String, Language> languages;
-    private final List<Class<? extends LanguageCategory>> languageCategories;
+    private final Minigame plugin;
+    private final Map<String, Language> registeredLanguages;
+    private final List<Class<? extends LanguagePath>> languageCategories;
 
     private final MessageManager messageManager;
 
@@ -24,55 +25,59 @@ public class LanguageManager implements Manager {
     private final boolean alwaysDefaultLanguage;
     private final String hoverMessageBounded;
 
+    private final List<String> availableLocales;
+
     private String categoryExtension = ".yml";
 
-    public LanguageManager(Minigame minigame) {
-        this.minigame = minigame;
-        this.languages = new HashMap<>();
-        this.languageCategories = minigame.searchClasses(LanguageCategoryValidator.class, LanguageCategory.class);
+    public LanguageManager(Minigame plugin) {
+        this.plugin = plugin;
+        this.registeredLanguages = new HashMap<>();
+        this.languageCategories = plugin.searchClasses(LanguageCategoryValidator.class, LanguagePath.class);
 
         this.categoryExtension = (!categoryExtension.contains(".") ? "." : "") + categoryExtension;
 
-        DataStorage config = minigame.getConfigManager().getStorage(FilePath.language, "config.yml");
+        DataStorage config = plugin.getConfigManager().getStorage(FilePath.language, "config.yml");
 
-        this.defaultLanguage = this.getLanguage(minigame.getConfigManager().getValue(config, "default-language", "en"));
-        this.alwaysDefaultLanguage = minigame.getConfigManager().getValue(config, "always-default-language", false);
-        this.hoverMessageBounded = minigame.getConfigManager().getValue(config, "hover-message-bounded", "%hm%");
+        this.availableLocales = plugin.getConfigManager().getValue(config, "available-locales", new ArrayList<>(){{add("en");}});
+        this.defaultLanguage = this.getLanguage(plugin.getConfigManager().getValue(config, "default-language", "en"));
+        this.alwaysDefaultLanguage = plugin.getConfigManager().getValue(config, "always-default-language", false);
+        this.hoverMessageBounded = plugin.getConfigManager().getValue(config, "hover-message-bounded", "%hm%");
 
-        this.messageManager = new MessageManager(minigame, config);
+        // aici trebuie sa adaug toate categoriile pentru fiecare locale, si continutul acelei categorii(stringuri si liste de string)
+
+        this.messageManager = new MessageManager(plugin, config);
 
         config.save();
-
-
     }
 
     @Override
-    public Minigame getMainInstance() {
-        return this.minigame;
+    public Minigame getPlugin() {
+        return this.plugin;
     }
 
     public MessageManager getMessageManager() {
         return this.messageManager;
     }
 
-    public List<Class<? extends LanguageCategory>> getCategories() {
+    public List<Class<? extends LanguagePath>> getCategories() {
         return this.languageCategories;
     }
 
-    public int getIndex(LanguageCategory languageCategory) {
+    public int getIndex(LanguagePath languagePath) {
         for (int i = 0; i < this.languageCategories.size(); i++) {
-            if(this.languageCategories.get(i) == languageCategory.getClass()) {
+            if(this.languageCategories.get(i) == languagePath.getClass()) {
                 return i;
             }
         }
+
         return 0;
     }
 
-    public Class<? extends LanguageCategory> getCategory(String id) {
-        Class<? extends LanguageCategory> category;
+    public Class<? extends LanguagePath> getCategory(String id) {
+        Class<? extends LanguagePath> category;
         for(int i = 0; i < this.getCategories().size(); i++) {
             category = this.getCategories().get(i);
-            if(LanguageCategory.getLanguageId(category).equals(id)) {
+            if(LanguagePath.getLanguageId(category).equals(id)) {
                 return category;
             }
         }
@@ -80,14 +85,14 @@ public class LanguageManager implements Manager {
     }
 
     public Language getLanguage(String locale) {
-        if(locale == null) {
+        if(locale == null || !this.availableLocales.contains(locale)) {
             return this.defaultLanguage;
         }
 
-        Language language = this.languages.get(locale);
+        Language language = this.registeredLanguages.get(locale);
         if(language == null) {
-            language = new GeneralLanguage(minigame, this, locale);
-            this.languages.put(locale, language);
+            language = new GeneralLanguage(plugin, this, locale);
+            this.registeredLanguages.put(locale, language);
         }
 
         return language;

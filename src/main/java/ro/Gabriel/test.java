@@ -9,7 +9,7 @@ public class test extends CustomListener<PlayerJoinEvent> {
     public void run(PlayerJoinEvent event) {
         //SpigotUser user = new SpigotUser(minigame, event.getPlayer(), "en"){};
 
-
+        System.out.println("JOINEVENTT!");
 
     }
 }

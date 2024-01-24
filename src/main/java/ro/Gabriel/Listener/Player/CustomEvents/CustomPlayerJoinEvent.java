@@ -2,8 +2,8 @@ package ro.Gabriel.Listener.Player.CustomEvents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+
 import ro.Gabriel.Listener.Player.CustomPlayerEvent;
-import ro.Gabriel.Main.Minigame;
 import ro.Gabriel.User.SpigotUser;
 
 public class CustomPlayerJoinEvent<PlayerType extends SpigotUser> extends CustomPlayerEvent<PlayerType> {
@@ -11,8 +11,8 @@ public class CustomPlayerJoinEvent<PlayerType extends SpigotUser> extends Custom
 
     private String joinMessage;
 
-    public CustomPlayerJoinEvent(Minigame minigame, Player who, String joinMessage) {
-        super(minigame, who);
+    public CustomPlayerJoinEvent(Player player, PlayerType spigotUser, String joinMessage) {
+        super(player, spigotUser);
         this.joinMessage = joinMessage;
     }
 

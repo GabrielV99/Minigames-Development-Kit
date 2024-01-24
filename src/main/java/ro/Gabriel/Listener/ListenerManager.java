@@ -1,9 +1,7 @@
 package ro.Gabriel.Listener;
 
-import org.bukkit.Warning;
 import org.bukkit.event.*;
 import org.bukkit.event.player.*;
-import org.bukkit.plugin.AuthorNagException;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.RegisteredListener;
@@ -11,55 +9,85 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.spigotmc.CustomTimingsHandler;
 import ro.Gabriel.Class.ClassScanner;
 import ro.Gabriel.Class.ClassUtils;
+import ro.Gabriel.Listener.Listeners.PlayerListeners.PlayerJoinListener;
 import ro.Gabriel.Listener.Player.CustomPlayerEvent;
 import ro.Gabriel.Listener.Player.CustomPlayerListener;
 import ro.Gabriel.Main.Minigame;
 import ro.Gabriel.Managers.Manager;
+import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.User.SpigotUser;
+import ro.Gabriel.test;
 
 import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.logging.Level;
+import java.util.*;
 
 public class ListenerManager implements Manager {
-    private final Minigame mainInstance;
+    private final Minigame basePlugin;
 
-    private Map<Class<? extends PlayerEvent>, CustomPlayerListener<? extends PlayerEvent>> playerListeners;
+    private final Map<Class<? extends PlayerEvent>, CustomPlayerListener<? extends PlayerEvent>> customPlayerListeners;
+    private final Map<Minigame, List<CustomListener<?>>> listeners;
 
-    public ListenerManager(Minigame mainInstance) {
-        this.mainInstance = mainInstance;
+    public ListenerManager(Minigame basePlugin) {
+        this.basePlugin = basePlugin;
+        this.customPlayerListeners = new HashMap<>();
+        this.listeners = new HashMap<>();
+
+        //this.registerListener(this.getPlugin(), test.class);
+
+        AsyncPlayerChatEvent s;
+        PlayerAchievementAwardedEvent s1;
+        PlayerAdvancementDoneEvent s2;
+        PlayerAnimationEvent s3;
+        PlayerArmorStandManipulateEvent s4;//de revenit cand e cazul
+        PlayerBedEnterEvent s5;
+        PlayerBedLeaveEvent s6;
+        PlayerBucketEvent s7;
+        PlayerBucketEmptyEvent s8;
+        PlayerBucketFillEvent s9;
+        PlayerChangedMainHandEvent s10;
+        PlayerChangedWorldEvent s11;
+        PlayerChannelEvent s12;
+        PlayerRegisterChannelEvent s13;
+        PlayerUnregisterChannelEvent s14;
+        PlayerChatEvent s15;
+        PlayerChatTabCompleteEvent s16;
+        PlayerCommandPreprocessEvent s17;
+        PlayerDropItemEvent s18;
+        PlayerEditBookEvent s19;
+        PlayerEggThrowEvent s20;
+        PlayerExpChangeEvent s21;
+        PlayerFishEvent s22;
 
         /*
-        * AsyncPlayerChatEvent
-        * AsyncPlayerPreLoginEvent
-        * PlayerAchievementAwardedEvent - Deprecated
-        * PlayerAdvancementDoneEvent
-        * PlayerAnimationEvent
+        * AsyncPlayerChatEvent                                  OK
+        * AsyncPlayerPreLoginEvent                              --
+        * PlayerAchievementAwardedEvent - Deprecated            OK
+        * PlayerAdvancementDoneEvent                            OK
+        * PlayerAnimationEvent                                  OK
         * PlayerArmorStandManipulateEvent
-        * PlayerBedEnterEvent
-        * PlayerBedLeaveEvent
+        * PlayerBedEnterEvent                                   OK
+        * PlayerBedLeaveEvent                                   OK
         *
-        * PlayerBucketEvent:
-        * PlayerBucketEmptyEvent
-        * PlayerBucketFillEvent
+        * PlayerBucketEvent:                                    OK
+        * PlayerBucketEmptyEvent                                OK
+        * PlayerBucketFillEvent                                 OK
         *
-        * PlayerChangedMainHandEvent
-        * PlayerChangedWorldEvent
+        * PlayerChangedMainHandEvent                            OK
+        * PlayerChangedWorldEvent                               OK
         *
-        * PlayerChannelEvent:
-        * PlayerRegisterChannelEvent
-        * PlayerUnregisterChannelEvent
+        * PlayerChannelEvent:                                   OK
+        * PlayerRegisterChannelEvent                            OK
+        * PlayerUnregisterChannelEvent                          OK
         *
-        * PlayerChatEvent - Deprecated
+        * PlayerChatEvent - Deprecated                          OK
         *
-        * PlayerChatTabCompleteEvent
-        * PlayerCommandPreprocessEvent
-        * PlayerDropItemEvent
-        * PlayerEditBookEvent
-        * PlayerEggThrowEvent
-        * PlayerExpChangeEvent
-        * PlayerFishEvent
+        * PlayerChatTabCompleteEvent                            OK
+        * PlayerCommandPreprocessEvent                          OK
+        * PlayerDropItemEvent                                   OK
+        * CustomPlayerEditBookEvent                             OK
+        * PlayerEggThrowEvent                                   OK
+        * PlayerExpChangeEvent                                  OK
+        * PlayerFishEvent                                       OK
         * PlayerGameModeChangeEvent
         * PlayerInteractAtEntityEvent
         * PlayerInteractEntityEvent
@@ -100,79 +128,166 @@ public class ListenerManager implements Manager {
         *
         *
         * */
-        PlayerInteractAtEntityEvent e1;
-        PlayerInteractEntityEvent e2;
-        PlayerInteractEvent e3;
-        PlayerShearEntityEvent e4;
 
     }
 
     @Override
-    public Minigame getMainInstance() {
-        return this.mainInstance;
+    public Minigame getPlugin() {
+        return this.basePlugin;
     }
 
 
     @SuppressWarnings("unchecked")
-    public void registerListeners(Minigame minigame) {
-        if(minigame.isBasePlugin()) {
-            return;
-        }
-
-        ClassScanner.getAllClassesByPlugin(minigame, clazz -> {// orice CustomListener dintr-un plugin secundar, sau orice CustomListener din pluginul MDK dar sa nu fie PlayerListener
-            Class<?> listenerEventType = this.getListenerEventType(clazz);
-            return ClassUtils.extendsClass(clazz, CustomListener.class)
-                    & (!minigame.isBasePlugin() | !ClassUtils.extendsClass(listenerEventType, PlayerEvent.class));
+    public void registerListeners(Minigame plugin) {
+        ClassScanner.getAllClassesByPlugin(plugin, clazz -> {
+            Class<?> listenerEventType = this.getListenerEventType(clazz);// true && true &&
+            return listenerEventType != null && ClassUtils.extendsClass(clazz, CustomListener.class)
+                    & (!plugin.isBasePlugin() | (!ClassUtils.extendsClass(listenerEventType, PlayerEvent.class) | ClassUtils.extendsClass(listenerEventType, CustomPlayerEvent.class) ));
         }).forEach(clazz -> {
-            this.registerListener(minigame, (Class<? extends CustomListener<? extends Event>>) clazz);
+            try {
+                this.registerListener(plugin, (Class<? extends CustomListener<? extends Event>>) clazz);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private void registerListener(Minigame minigame, Class<? extends CustomListener<?>> listenerClass) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void registerListener(Minigame plugin, Class<? extends CustomListener<?>> listenerClass) {
         Class<?> listenerEventType = this.getListenerEventType(listenerClass);
         if(listenerEventType == null) return;
 
-        if(ClassUtils.extendsClass(listenerEventType, PlayerEvent.class) & !ClassUtils.extendsClass(listenerEventType, CustomPlayerEvent.class) & !minigame.isBasePlugin()) {
-            minigame.log("&cUnable to register &6" + listenerEventType.getSimpleName() + " &6listener. You can use &aCustom" + listenerEventType.getSimpleName() + " &6instead...");
+        if(!listenerEventType.equals(CustomPlayerEvent.class) & ClassUtils.extendsClass(listenerEventType, PlayerEvent.class) & !plugin.isBasePlugin()) {
+            plugin.log("&cUnable to register &6" + listenerClass.getSimpleName() + " &6listener because contain PlayerEvent type. You can use &aCustom" + listenerEventType.getSimpleName() + " &6instead for your listener...");
+            //minigame.log("&cUnable to register &6" + listenerEventType.getSimpleName() + " &6listener. You can use &aCustom" + listenerEventType.getSimpleName() + " &6instead...");
             return;
         }
 
-        //CustomPlayerEvent din MDK sau plugin secundar
-        //PlayerEvent spigot/bukkit din MDK
-
-        if(ClassUtils.extendsClass(listenerEventType, CustomPlayerEvent.class)) {
-            try {
+        try {
+            if(ClassUtils.extendsClass(listenerEventType, CustomPlayerEvent.class)) {
                 Class<? extends PlayerEvent> bukkitPlayerEvent = (Class<? extends PlayerEvent>) Class.forName(
                         "org.bukkit.event.player." + listenerEventType.getSimpleName().replace("Custom", "")
                 );
 
-                CustomPlayerListener<? extends PlayerEvent> playerListener = this.playerListeners.get(bukkitPlayerEvent);
+                CustomPlayerListener<? extends PlayerEvent> playerListener = this.customPlayerListeners.get(bukkitPlayerEvent);
                 if(playerListener == null) {
-                    playerListener = new CustomPlayerListener(this, bukkitPlayerEvent);
-                    this.playerListeners.put(bukkitPlayerEvent, playerListener);
+                    playerListener = new CustomPlayerListener(bukkitPlayerEvent);
+                    this.customPlayerListeners.put(bukkitPlayerEvent, playerListener);
 
-                    RegisteredListener registeredListener = this.createRegisteredListener(minigame, playerListener);
-                    this.getEventListeners(this.getRegistrationClass(bukkitPlayerEvent)).register(registeredListener);
+                    RegisteredListener registeredListener = this.createRegisteredListener(plugin.getBasePluginInstance(), playerListener, bukkitPlayerEvent);
+                    this.getEventListeners(bukkitPlayerEvent).register(registeredListener);
                 }
-                playerListener.registerListener(minigame, this, (Class<? extends CustomListener<CustomPlayerEvent<? extends SpigotUser>>>)listenerClass);
-            } catch (Exception e) {
-                e.printStackTrace();
+                playerListener.registerListener(plugin, this, (Class<? extends CustomListener<CustomPlayerEvent<? extends SpigotUser>>>)listenerClass);
+
                 return;
             }
-        }
 
+            CustomListener<?> listener = listenerClass.getConstructor().newInstance();
+            ReflectionUtils.setValue(listener, CustomListener.class, true, "plugin", plugin);
 
-        /*try {
-            CustomListener<?> listener = (CustomListener<?>) listenerClass.getConstructor().newInstance();
-            //RegisteredListener registeredListener = this.createRegisteredListener(minigame, listenerClass);
-            //this.getEventListeners(this.getRegistrationClass(bukkitPlayerEvent)).register(registeredListener);
+            RegisteredListener registeredListener = this.createRegisteredListener(this.getPlugin(), listener, (Class<? extends Event>) listenerEventType);
+            this.getEventListeners((Class<? extends Event>) listenerEventType).register(registeredListener);
+
+            this.listeners.computeIfAbsent(plugin, k -> new ArrayList<>()).add(listener);
         } catch (Exception e) {
-
-        }*/
+            e.printStackTrace();
+        }
     }
 
-    public RegisteredListener createRegisteredListener(Minigame minigame, CustomListener<? extends Event> listener) {
+    @SuppressWarnings("unchecked")
+    public RegisteredListener createRegisteredListener(Minigame minigame, CustomListener<? extends Event> listener, Class<? extends Event> eventType) {
+        EventHandler eventHandled = this.getEventHandler(listener);
+
+        final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + minigame.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::run(" + eventType.getSimpleName() + ")", JavaPluginLoader.pluginParentTimer); // Spigot
+        EventExecutor executor = (listener1, event) -> {
+            try {
+                if (!eventType.isAssignableFrom(event.getClass())) {
+                    return;
+                }
+
+                // Spigot start
+                boolean isAsync = event.isAsynchronous();
+                if (!isAsync) timings.startTiming();
+                ((CustomListener<Event>)listener).run(event);
+
+                if (!isAsync) timings.stopTiming();
+                // Spigot end
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+        return new RegisteredListener(listener, executor, eventHandled.priority(), minigame, eventHandled.ignoreCancelled());
+    }
+
+
+
+
+    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
+        try {
+            clazz.getDeclaredMethod("getHandlerList");
+            return clazz;
+        } catch (NoSuchMethodException e) {
+            if (clazz.getSuperclass() != null
+                    && !clazz.getSuperclass().equals(Event.class)
+                    && Event.class.isAssignableFrom(clazz.getSuperclass())) {
+                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
+            } else {
+                throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
+            }
+        }
+    }
+
+    private HandlerList getEventListeners(Class<? extends Event> type) {
+        try {
+            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList");
+            method.setAccessible(true);
+
+            if (!Modifier.isStatic(method.getModifiers())) {
+                throw new IllegalAccessException("getHandlerList must be static");
+            }
+
+            return (HandlerList) method.invoke(null);
+        } catch (Exception e) {
+            throw new IllegalPluginAccessException("Error while registering listener for event type " + type.toString() + ": " + e.toString());
+        }
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    @SuppressWarnings("unchecked")
+    private Class<? extends Event> getListenerEventType(Class<?> listenerClass) {
+        Type type = listenerClass.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            Type parameterizedType = ((ParameterizedType) type).getActualTypeArguments()[0];
+            String typeName = parameterizedType.toString();
+
+            try {
+                return (Class<? extends Event>) (typeName.contains("<") ? Class.forName(typeName.substring(0, typeName.indexOf('<'))) : parameterizedType);
+            } catch (Exception ignored) { }
+        }
+        return null;
+    }
+
+    public EventHandler getEventHandler(CustomListener<? extends Event> listener) {
+       try {
+           EventHandler eventHandler = ClassUtils.getAnnotation(ReflectionUtils.getMethod(listener.getClass(), "run", true, Event.class), EventHandler.class);
+           if(eventHandler == null) {
+               Class<? extends CustomListener<? extends Event>> superClass = (Class<? extends CustomListener<? extends Event>>)listener.getClass().getSuperclass();
+               if(superClass != null) {
+                   eventHandler = ClassUtils.getAnnotation(ReflectionUtils.getMethod(superClass, "run", true, Event.class), EventHandler.class);
+               }
+           }
+           return eventHandler;
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+
+       return null;
+    }
+}
+
+/*public RegisteredListener createRegisteredListener(Minigame minigame, CustomListener<? extends Event> listener) {
         Method run;
 
         try {
@@ -247,59 +362,4 @@ public class ListenerManager implements Manager {
         }
 
         return null;
-    }
-
-    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
-        try {
-            clazz.getDeclaredMethod("getHandlerList");
-            return clazz;
-        } catch (NoSuchMethodException e) {
-            if (clazz.getSuperclass() != null
-                    && !clazz.getSuperclass().equals(Event.class)
-                    && Event.class.isAssignableFrom(clazz.getSuperclass())) {
-                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
-            } else {
-                throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
-            }
-        }
-    }
-
-    private HandlerList getEventListeners(Class<? extends Event> type) {
-        try {
-            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList");
-            method.setAccessible(true);
-
-            if (!Modifier.isStatic(method.getModifiers())) {
-                throw new IllegalAccessException("getHandlerList must be static");
-            }
-
-            return (HandlerList) method.invoke(null);
-        } catch (Exception e) {
-            throw new IllegalPluginAccessException("Error while registering listener for event type " + type.toString() + ": " + e.toString());
-        }
-    }
-
-
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    private Class<? extends Event> getListenerEventType(Class<?> listenerClass) {
-        Type type = listenerClass.getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            return (Class<? extends Event>) parameterizedType.getActualTypeArguments()[0];
-        }
-        return null;
-    }
-
-    public EventHandler getEventHandler(CustomListener<? extends Event> listener) {
-        EventHandler eventHandler = ClassUtils.getAnnotation(listener.getClass(), EventHandler.class);
-        if(eventHandler == null) {
-            Class<? extends CustomListener<? extends Event>> superClass = (Class<? extends CustomListener<? extends Event>>)listener.getClass().getSuperclass();
-            if(superClass != null) {
-                eventHandler = ClassUtils.getAnnotation(superClass, EventHandler.class);
-            }
-        }
-        return eventHandler;
-    }
-}
+    }*/

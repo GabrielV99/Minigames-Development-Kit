@@ -1,7 +1,8 @@
 package ro.Gabriel.Main;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import ro.Gabriel.Listener.ListenerManager;
+
+import org.bukkit.plugin.java.JavaPlugin;
 
 abstract class DevelopmentMinigame extends JavaPlugin {
     private static MinigamesDevelopmentKit BASE_PLUGIN_INSTANCE;
@@ -17,8 +18,8 @@ abstract class DevelopmentMinigame extends JavaPlugin {
         return BASE_PLUGIN_INSTANCE;
     }
 
-    public boolean isBasePlugin(Minigame minigame) {
-        return minigame instanceof MinigamesDevelopmentKit;
+    public boolean isBasePlugin(Minigame plugin) {
+        return plugin instanceof MinigamesDevelopmentKit;
     }
 
     public boolean isBasePlugin() {

@@ -2,9 +2,9 @@ package ro.Gabriel.Messages;
 
 import net.md_5.bungee.api.chat.TextComponent;
 
+import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
-import ro.Gabriel.Language.LanguageCategory;
 import ro.Gabriel.Placeholder.Placeholder;
 import ro.Gabriel.Language.Language;
 import ro.Gabriel.Managers.Manager;
@@ -16,13 +16,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class MessageManager implements Manager {
-
-    private final Minigame minigame;
+    private final Minigame plugin;
 
     private final Map<String, HoverText> hoverTexts;
 
-    public MessageManager(Minigame minigame, DataStorage config) {
-        this.minigame = minigame;
+    public MessageManager(Minigame plugin, DataStorage config) {
+        this.plugin = plugin;
         this.hoverTexts = new HashMap<>();
 
         Set<String> hoverMessages = config.getKeys("HoverMessages");
@@ -30,19 +29,19 @@ public class MessageManager implements Manager {
         if(hoverMessages != null) {
             hoverMessages.forEach(hover -> {
                 this.hoverTexts.put(hover,
-                        new HoverText(minigame.getLanguageManager(), config.getString("text-path"), config.getString("hover-text-path"), config.getString("language-category"), config.getString("command"), config.getBoolean("execute-command"))
+                        new HoverText(plugin.getLanguageManager(), config.getString("text-path"), config.getString("hover-text-path"), config.getString("language-category"), config.getString("command"), config.getBoolean("execute-command"))
                 );
             });
         }
     }
 
     @Override
-    public Minigame getMainInstance() {
-        return this.minigame;
+    public Minigame getPlugin() {
+        return this.plugin;
     }
 
     public void addHoverText(String id, String text, String hoverText, String command, boolean executeCommand) {
-        this.hoverTexts.put(id, new HoverText(this.minigame.getLanguageManager(), text, hoverText, command, executeCommand));
+        this.hoverTexts.put(id, new HoverText(this.plugin.getLanguageManager(), text, hoverText, command, executeCommand));
     }
 
     public HoverText getHoverText(String id) {
@@ -53,12 +52,12 @@ public class MessageManager implements Manager {
         return this.buildMessage(message, null, null);
     }
 
-    public Object buildMessage(LanguageCategory languageKey, Language language, Object placeholderSource) {
+    public Object buildMessage(LanguagePath languageKey, Language language, Object placeholderSource) {
         return this.buildMessage(languageKey, language, languageKey.getPlaceholder(), placeholderSource);
     }
 
     @SuppressWarnings("unchecked")
-    public Object buildMessage(LanguageCategory languageKey, Language language, Placeholder<?> placeholder, Object placeholderSource) {
+    public Object buildMessage(LanguagePath languageKey, Language language, Placeholder<?> placeholder, Object placeholderSource) {
         return this.buildMessage(language.get(languageKey), language, (Placeholder<Object>)placeholder, placeholderSource);
     }
 
@@ -70,8 +69,8 @@ public class MessageManager implements Manager {
         try {
             if(message instanceof String) {
                 return buildMessage(placeholder != null
-                        ? placeholder.makeReplace(MessageUtils.colorString(this.minigame, (String) message), placeholderSource)
-                        : MessageUtils.colorString(this.minigame, (String) message), language, placeholder, placeholderSource);
+                        ? placeholder.makeReplace(MessageUtils.colorString(this.plugin, (String) message), placeholderSource)
+                        : MessageUtils.colorString(this.plugin, (String) message), language, placeholder, placeholderSource);
             } else if(message instanceof List) {
                 return this.buildMessage((Object)MessageUtils.listToString(message), language, placeholder, placeholderSource);
             }

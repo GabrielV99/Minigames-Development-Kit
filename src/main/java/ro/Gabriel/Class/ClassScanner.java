@@ -14,7 +14,9 @@ import java.util.List;
 import java.io.File;
 
 public class ClassScanner {
-    public static List<Class<?>> getAllClasses(Predicate<? super Class<?>> predicate) { // OK
+
+    @SuppressWarnings("unused")
+    public static List<Class<?>> getAllClasses(Predicate<? super Class<?>> predicate) {
         return getAllClassesByPlugin(MinigamesDevelopmentKit.getInstance(), predicate);
     }
 
@@ -26,11 +28,12 @@ public class ClassScanner {
         return ClassScanner.getAllClassesByPlugin(plugin, type).stream().filter(predicate).collect(Collectors.toList());
     }
 
-    public static List<Class<?>> getAllClassesByPlugin(Plugin plugin) {// OK
+    public static List<Class<?>> getAllClassesByPlugin(Plugin plugin) {
         return getAllClassesByPlugin(plugin, Object.class);
     }
 
-    public static <T> List<Class<? extends T>> getAllClassesByPlugin(Plugin plugin, Class<T> type) {// OK
+    @SuppressWarnings("unchecked")
+    public static <T> List<Class<? extends T>> getAllClassesByPlugin(Plugin plugin, Class<T> type) {
         List<Class<? extends T>> classes = new ArrayList<>();
 
         try {

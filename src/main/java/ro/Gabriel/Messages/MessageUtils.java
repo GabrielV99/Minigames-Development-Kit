@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class MessageUtils {
 
     public static String colorString(char altColorCode, String string) {
-        return ChatColor.translateAlternateColorCodes(altColorCode, string);
+        return string != null ? ChatColor.translateAlternateColorCodes(altColorCode, string) : null;
     }
 
     public static String colorString(Minigame minigame, String string) {

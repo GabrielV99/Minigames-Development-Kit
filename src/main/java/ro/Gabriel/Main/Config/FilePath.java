@@ -5,7 +5,8 @@ import ro.Gabriel.Storage.DataStorage.DataStorage;
 
 public enum FilePath {
     config("config", ""),
-    language("language", "Language");
+    language("language", "Language"),;
+    //language_commands("language-commands", language.defaultValue + "\\%locale%");
 
     private final String file, defaultValue;
     private String value;

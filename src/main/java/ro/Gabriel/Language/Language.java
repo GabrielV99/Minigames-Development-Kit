@@ -1,5 +1,7 @@
 package ro.Gabriel.Language;
 
+import ro.Gabriel.Language.Categories.LanguageCategoryType;
+
 import java.util.List;
 
 public abstract class Language {
@@ -9,11 +11,14 @@ public abstract class Language {
         this.locale = locale;
     }
 
-    public abstract Object get(LanguageCategory category);
+    public abstract Object get(LanguagePath path);
+    public abstract Object get(LanguageCategoryType category, String path);//
 
-    public abstract String getString(LanguageCategory category);
+    public abstract String getString(LanguagePath path);
+    public abstract String getString(LanguageCategoryType category, String path);//
 
-    public abstract List<String> getStringList(LanguageCategory category);
+    public abstract List<String> getStringList(LanguagePath path);
+    public abstract List<String> getStringList(LanguageCategoryType category, String path);//
 
     public String getLocale() {
         return this.locale;

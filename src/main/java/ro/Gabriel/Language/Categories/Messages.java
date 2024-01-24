@@ -1,9 +1,9 @@
 package ro.Gabriel.Language.Categories;
 
-import ro.Gabriel.Language.LanguageCategory;
+import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Placeholder.Placeholder;
 
-public enum Messages implements LanguageCategory {
+public enum Messages implements LanguagePath {
     M1("message_1"),
     M2("message_2"),
     M3("message_3");

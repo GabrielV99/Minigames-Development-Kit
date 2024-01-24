@@ -3,9 +3,8 @@ package ro.Gabriel.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
 
-import ro.Gabriel.Class.Validators.CustomListenerValidator;
-import ro.Gabriel.Listener.CustomListener;
-import ro.Gabriel.Misc.ReflectionUtils;
+import ro.Gabriel.Command.CommandManager;
+import ro.Gabriel.Repository.Repositories.UserRepository;
 import ro.Gabriel.Repository.Repository;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
 import ro.Gabriel.Main.Config.ConfigManager;
@@ -15,30 +14,36 @@ import ro.Gabriel.Class.ClassScanner;
 import ro.Gabriel.Storage.FileUtils;
 import ro.Gabriel.Managers.Manager;
 import ro.Gabriel.Class.ClassUtils;
+import ro.Gabriel.User.ConsoleUser;
 import ro.Gabriel.User.SpigotUser;
 
 import java.util.*;
 
-public abstract class Minigame extends DevelopmentMinigame {
+public abstract class Minigame extends DevelopmentMinigame { // 2:59,
     private final Map<Class<? extends ClassValidator>, ClassValidator> validators;
     private final Map<Class<? extends Manager>, Manager> managers;
-    private final List<CustomListener<?>> listeners;
+    //private final List<CustomListener<?>> listeners;
 
     private final ConfigManager configManager;
     private final LanguageManager languageManager;
+    protected final CommandManager commandManager;
 
     private final String mainStoragePath;
 
+    private final ConsoleUser defaultUser;
+
     public Minigame() {
+        this.defaultUser = new ConsoleUser(this);
+
         this.mainStoragePath = getDataFolder() + "\\";
 
         this.validators = new HashMap<>();
         this.managers = new HashMap<>();
-        this.listeners = new ArrayList<>();
+        //this.listeners = new ArrayList<>();
 
         ClassScanner.getAllTypeClassesByPlugin(this, clazz -> !ClassUtils.isInterface(clazz), ClassValidator.class).forEach(clazz -> {
             try {
-                this.registerValidator(clazz.getDeclaredConstructor().newInstance());
+                this.validators.put(clazz, clazz.getDeclaredConstructor().newInstance());
             } catch (Exception e) {
                 e.printStackTrace();// de sters dupa testare
             }
@@ -49,22 +54,27 @@ public abstract class Minigame extends DevelopmentMinigame {
 
         this.configManager = new ConfigManager(this, MDKConfigFile);
         this.languageManager = new LanguageManager(this);
+        this.commandManager = new CommandManager(this);
 
         this.getBasePluginInstance().getListenerManager().registerListeners(this);
 
-
-//        this.searchClasses(CustomListenerValidator.class).forEach(clazz -> {
-//            try {
-//                CustomListener<?> listener = (CustomListener<?>) clazz.getConstructor().newInstance();
-//                ReflectionUtils.invokeMethod(listener, CustomListener.class, true, "registerListener", Minigame.this);
-//                this.listeners.add(listener);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
+        /*
+        *
+        * this is us,
+        * fool me once,
+        * Berlin (pe Netflix),
+        * celebrity(pe Netflix)
+        * young sheldon
+        * crash landing on you
+        *
+        * */
     }
 
-    public abstract Repository<UUID, ? extends SpigotUser> getUserRepository();
+    public ConsoleUser getDefaultUser() {
+        return this.defaultUser;
+    }
+
+    public abstract UserRepository<? extends SpigotUser> getUserRepository();
 
 
 
@@ -105,9 +115,6 @@ public abstract class Minigame extends DevelopmentMinigame {
 
 
 
-    private void registerValidator(ClassValidator validator) {
-        this.validators.put(validator.getClass(), validator);
-    }
 
     public ClassValidator getValidator(Class<? extends ClassValidator> validatorType) {
         ClassValidator validator = this.validators.get(validatorType);

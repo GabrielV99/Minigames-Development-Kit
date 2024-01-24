@@ -9,17 +9,18 @@ import ro.Gabriel.Main.Minigame;
 
 public class ConfigManager implements Manager {
 
-    private final Minigame minigame;
+    private final Minigame plugin;
 
     private final ServerType serverType;
     private final boolean bungeeCord;
+    private final boolean commandsMessagesFromMainPlugin;
 
     private char altColorCode;
 
     private final String prefix;
 
     public ConfigManager(Minigame minigame, DataStorage MDKConfigFile) {
-        this.minigame = minigame;
+        this.plugin = minigame;
 
         boolean isMDKPlugin = minigame.getClass().equals(MinigamesDevelopmentKit.class);
 
@@ -42,6 +43,7 @@ public class ConfigManager implements Manager {
 
         this.serverType = ServerType.of(this.getValue(config, "server-type", "MULTI_ARENA"));
         this.bungeeCord = this.getValue(config, "bungee-cord", false);
+        this.commandsMessagesFromMainPlugin = this.getValue(config, "commands-messages-from-main-plugin", true);
         this.altColorCode = this.getValue(config, "alt-color-code", "&").charAt(0);
         //Character s = this.getValue(config, "alt-color-code", '&').charValue();
 //        try {
@@ -65,8 +67,8 @@ public class ConfigManager implements Manager {
     }
 
     @Override
-    public Minigame getMainInstance() {
-        return this.minigame;
+    public Minigame getPlugin() {
+        return this.plugin;
     }
 
     @SuppressWarnings("unchecked")
@@ -85,10 +87,10 @@ public class ConfigManager implements Manager {
         String storagePath = path.getPath();
         storagePath = storagePath + ((!storagePath.replace(" ", "").equals("") && !storagePath.endsWith("\\")) ? "\\" : "");
 
-        boolean fileResource = minigame.getResource(storagePath + (storage + (!storage.contains(".") ? FileUtils.getFileExtension(minigame.getMainStoragePath() + storagePath + storage) : ""))) != null;
+        boolean fileResource = plugin.getResource(storagePath + (storage + (!storage.contains(".") ? FileUtils.getFileExtension(plugin.getMainStoragePath() + storagePath + storage) : ""))) != null;
 
         return DataStorage.getStorage(
-                minigame,
+                plugin,
                 storagePath + storage,
                 fileResource
         );
@@ -108,6 +110,10 @@ public class ConfigManager implements Manager {
 
     public char getAltColorCode() {
         return altColorCode != 0 ? altColorCode : '&';
+    }
+
+    public boolean isCommandsMessagesFromMainPlugin() {
+        return this.commandsMessagesFromMainPlugin;
     }
 }
 

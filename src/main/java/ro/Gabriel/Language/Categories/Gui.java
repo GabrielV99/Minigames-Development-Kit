@@ -1,9 +1,9 @@
 package ro.Gabriel.Language.Categories;
 
-import ro.Gabriel.Language.LanguageCategory;
+import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Placeholder.Placeholder;
 
-public enum Gui implements LanguageCategory {
+public enum Gui implements LanguagePath {
 
     NAME("name"),
     TITLE("title"),
