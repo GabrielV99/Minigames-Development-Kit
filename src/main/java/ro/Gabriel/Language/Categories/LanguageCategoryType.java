@@ -4,23 +4,18 @@ import ro.Gabriel.Language.Impl.GeneralLanguage;
 import ro.Gabriel.Language.LanguageCategory;
 import ro.Gabriel.Language.Language;
 
-public enum LanguageCategoryType {
-    GUI,
-    COMMANDS;
+public enum LanguageCategoryType implements LanguageCategory {
+    GUI("Gui"),
+    COMMANDS("commands");
 
+    String storagePath;
 
-    public LanguageCategory getCategory(Language language) {
-        if(language instanceof GeneralLanguage) {
-            switch (this) {
-                case GUI: {
-                    return ((GeneralLanguage)language).getGui();
-                }
-                case COMMANDS: {
-                    return ((GeneralLanguage)language).getCommands();
-                }
-            }
-        }
+    LanguageCategoryType(String storagePath) {
+        this.storagePath = storagePath;
+    }
 
-        return null;
+    @Override
+    public String getStoragePath() {
+        return storagePath;
     }
 }

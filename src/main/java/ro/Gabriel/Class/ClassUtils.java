@@ -15,6 +15,10 @@ public class ClassUtils {
         return clazz.isInterface();
     }
 
+    public static boolean isEnum(Class<?> clazz) {
+        return clazz.isEnum();
+    }
+
     public static boolean isAnnotated(AnnotatedElement clazz, Class<? extends Annotation> annotation) {
         return clazz.isAnnotationPresent(annotation);
     }

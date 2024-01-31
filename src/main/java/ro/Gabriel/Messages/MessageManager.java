@@ -2,6 +2,7 @@ package ro.Gabriel.Messages;
 
 import net.md_5.bungee.api.chat.TextComponent;
 
+import ro.Gabriel.Language.LanguageCategory;
 import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
@@ -29,7 +30,14 @@ public class MessageManager implements Manager {
         if(hoverMessages != null) {
             hoverMessages.forEach(hover -> {
                 this.hoverTexts.put(hover,
-                        new HoverText(plugin.getLanguageManager(), config.getString("text-path"), config.getString("hover-text-path"), config.getString("language-category"), config.getString("command"), config.getBoolean("execute-command"))
+                        new HoverText(
+                                plugin.getLanguageManager(),
+                                config.getString("text-path"),
+                                config.getString("hover-text-path"),
+                                config.getString("language-category"),
+                                config.getString("command"),
+                                config.getBoolean("execute-command")
+                        )
                 );
             });
         }
@@ -44,6 +52,14 @@ public class MessageManager implements Manager {
         this.hoverTexts.put(id, new HoverText(this.plugin.getLanguageManager(), text, hoverText, command, executeCommand));
     }
 
+    public void addHoverText(String id, String text, String hoverText, String command, LanguageCategory category, boolean executeCommand) {
+        this.hoverTexts.put(id, new HoverText(this.plugin.getLanguageManager(), text, hoverText, category, command, executeCommand));
+    }
+
+    public void addHoverText(String id, String text, String hoverText, String command, String category, boolean executeCommand) {
+        this.hoverTexts.put(id, new HoverText(this.plugin.getLanguageManager(), text, hoverText, category, command, executeCommand));
+    }
+
     public HoverText getHoverText(String id) {
         return this.hoverTexts.get(id);
     }
@@ -52,13 +68,13 @@ public class MessageManager implements Manager {
         return this.buildMessage(message, null, null);
     }
 
-    public Object buildMessage(LanguagePath languageKey, Language language, Object placeholderSource) {
-        return this.buildMessage(languageKey, language, languageKey.getPlaceholder(), placeholderSource);
+    public Object buildMessage(LanguagePath path, Language language, Object placeholderSource) {
+        return this.buildMessage(path, language, path.getPlaceholder(), placeholderSource);
     }
 
     @SuppressWarnings("unchecked")
-    public Object buildMessage(LanguagePath languageKey, Language language, Placeholder<?> placeholder, Object placeholderSource) {
-        return this.buildMessage(language.get(languageKey), language, (Placeholder<Object>)placeholder, placeholderSource);
+    public Object buildMessage(LanguagePath path, Language language, Placeholder<?> placeholder, Object placeholderSource) {
+        return this.buildMessage((Object)language.getString(path), language, (Placeholder<Object>)placeholder, placeholderSource);
     }
 
     public Object buildMessage(Object message, Placeholder<Object> placeholder, Object placeholderSource) {
@@ -69,12 +85,12 @@ public class MessageManager implements Manager {
         try {
             if(message instanceof String) {
                 return buildMessage(placeholder != null
-                        ? placeholder.makeReplace(MessageUtils.colorString(this.plugin, (String) message), placeholderSource)
-                        : MessageUtils.colorString(this.plugin, (String) message), language, placeholder, placeholderSource);
+                        ? placeholder.makeReplace((String) message, placeholderSource)
+                        : (String) message, language, placeholder, placeholderSource);
             } else if(message instanceof List) {
                 return this.buildMessage((Object)MessageUtils.listToString(message), language, placeholder, placeholderSource);
             }
-        } catch (Exception ignored) { ignored.printStackTrace(); }
+        } catch (Exception e) { e.printStackTrace(); }
 
         return DataDefaultValues.get(String.class);
     }
@@ -97,7 +113,8 @@ public class MessageManager implements Manager {
             if(hoverText != null) {
                 String hText = hoverText.getText(language);
 
-                (textComponent != null ? textComponent : (textComponent = new TextComponent(this.buildParts(parts, i)))).addExtra(hoverText.getComponent(!MessageUtils.isColored(hText) ? MessageUtils.getColorCode(parts, i) : "", language, placeholder, placeholderSource));
+                (textComponent != null ? textComponent : (textComponent = new TextComponent(this.buildParts(parts, i))))
+                        .addExtra(hoverText.getComponent(!MessageUtils.isColored(hText) ? MessageUtils.getColorCode(parts, i) : "", language, placeholder, placeholderSource));
                 textComponent.addExtra(subParts[1]);
             } else {
                 if(textComponent != null) {

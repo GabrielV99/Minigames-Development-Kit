@@ -1,17 +1,20 @@
 package ro.Gabriel.Language;
 
-import ro.Gabriel.Language.Categories.CommandMessages;
 import ro.Gabriel.Placeholder.Placeholder;
-import ro.Gabriel.Class.ClassUtils.EnumId;
 import ro.Gabriel.Class.ClassUtils;
 
-public interface LanguagePath extends EnumId<String> {
+public interface LanguagePath extends LanguageCategory {
     String getPath();
     Placeholder<?> getPlaceholder();
 
     @Override
     default String getId() {
-        return getPath();
+        return this.getPath();
+    }
+
+    @Override
+    default String getStoragePath() {
+        return getLanguageId(this.getClass());
     }
 
     static String getLanguageId(Class<?> clazz) {

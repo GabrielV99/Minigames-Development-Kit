@@ -1,11 +1,7 @@
 package ro.Gabriel.Language.Impl;
 
-import ro.Gabriel.Class.Annotations.ObjectId;
-import ro.Gabriel.Language.Categories.CommandMessages;
-import ro.Gabriel.Language.Categories.LanguageCategoryType;
 import ro.Gabriel.Language.LanguageCategory;
-import ro.Gabriel.Language.LanguagePath;
-import ro.Gabriel.Placeholder.Placeholder;
+import ro.Gabriel.Messages.MessageUtils;
 import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
 import ro.Gabriel.Language.LanguageManager;
@@ -13,15 +9,15 @@ import ro.Gabriel.Main.Config.FilePath;
 import ro.Gabriel.Language.Language;
 import ro.Gabriel.Main.Minigame;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GeneralLanguage extends Language {
 
     private final LanguageManager languageManager;
 
-    protected DataStorage[] categories;
-    //Map<String, Object> paths;
+    private final Map<String, DataStorage> categories;
+    private final Map<String, String> strings;
+    private final Map<String, List<String>> stringLists;
 
     //pentru partea de Gui atunci cand ele se creeaza si trebuie sa extragi toate numele itemelor titlurile inventarelor, etc,
     // acestea nu trebuie extrease cu valori ale enumerarilor adica eu nu o sa creez o enumerare si sa adaug in ea cate o valoarea
@@ -29,86 +25,60 @@ public class GeneralLanguage extends Language {
     /*acest DataStorage se va referi la fisierul de unde sistemul de Gui isi va extrage toate titlurile pentru itemele inventarelor,
     titlurile de inventare etc, deoarece toate stringurile sau listele de stringuri se voi extrage dupa id-ul path-ului din fisier
     automat cand gui-ul se va creea*/
-    private LanguageCategory gui, commands;
+    //private LanguageCategory gui, commands;
 
-    public GeneralLanguage(Minigame minigame, LanguageManager languageManager, String locale) {
-        super(locale);
+    public GeneralLanguage(Minigame plugin, LanguageManager languageManager, String locale) {
+        super(plugin, locale);
 
         this.languageManager = languageManager;
-        this.categories = new DataStorage[languageManager.getCategories().size() + 1];
+        this.categories = new HashMap<>(languageManager.getCategories().size());
+        this.strings = new HashMap<>();
+        this.stringLists = new HashMap<>();
 
-        for(int i = 0; i < categories.length - 1; i++) {
-            this.categories[i] = minigame.getConfigManager().getStorage(
-                    FilePath.language,
-                    locale + "\\" + LanguagePath.getLanguageId(languageManager.getCategories().get(i)) + languageManager.getCategoryExtension()
-            );
-        }
+        languageManager.getCategories().forEach(category -> {
+            this.categories.put(category.getStoragePath(), plugin.getConfigManager().getStorage(FilePath.language,
+                    locale + "\\" + category.getStoragePath() + languageManager.getCategoryExtension()));
+        });
+    }
 
-        this.commands = new LanguageCategory() {
-            final DataStorage commands = minigame.getConfigManager().getStorage(FilePath.language,
-                    locale + "\\commands" + languageManager.getCategoryExtension());
-            @Override
-            public DataStorage getStorage() {
-                return commands;
+    @Override
+    public String getString(LanguageCategory category, String path) {
+        String value = this.strings.get(path);
+        if(value == null) {
+            DataStorage storage = this.categories.get(category.getStoragePath());
+            if(storage != null) {
+                Object relativeValue = storage.get(path);
+                value = MessageUtils.colorString(this.getPlugin(), relativeValue instanceof List ? MessageUtils.listToString(relativeValue) : ((String) relativeValue));
             }
-        };
-        this.categories[this.categories.length - 1] = this.commands.getStorage();
 
-    }
+            if(value == null) {
+                value = DataDefaultValues.get(String.class);
+            }
 
-    @Override
-    public Object get(LanguagePath path) {
-
-        path.getClass().isEnum();
-
-        int index = this.languageManager.getIndex(path);
-        if(this.categories.length > index) {
-            DataStorage data = this.categories[index];
-            return data != null ? data.get(path.getPath()) : DataDefaultValues.get(String.class);
-        } else {
-            return "";
+            this.strings.put(path, value);
         }
-    }
-
-    @Override
-    public Object get(LanguageCategoryType category, String path) {
-        Object value = category.getCategory(this).getStorage().get(path);
-        return value != null ? value : DataDefaultValues.get(String.class);
-    }
-
-    @Override
-    public String getString(LanguagePath path) {
-        Object value = this.get(path);
-        return value instanceof String ? (String) value : DataDefaultValues.get(String.class);
-    }
-
-    @Override
-    public String getString(LanguageCategoryType category, String path) {
-        Object value = this.get(category, path);
-        return value instanceof String ? (String) value : DataDefaultValues.get(String.class);
+        return value;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> getStringList(LanguagePath path) {
-        Object value = this.get(path);
-        return value instanceof List ? (List<String>) value : new ArrayList<>();
-    }
+    public List<String> getStringList(LanguageCategory category, String path) {
+        List<String> value = this.stringLists.get(path);
+        if(value == null) {
+            DataStorage storage = this.categories.get(category.getStoragePath());
+            if(storage != null) {
+                Object relativeValue = storage.get(path);
+                value = relativeValue instanceof List
+                        ? (List<String>)relativeValue
+                        : new ArrayList<>(){{add(relativeValue instanceof String ? (String)relativeValue : DataDefaultValues.get(String.class));}};
+            }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<String> getStringList(LanguageCategoryType category, String path) {
-        Object value = this.get(category, path);
-        return value instanceof List ? (List<String>) value : new ArrayList<>();
-    }
+            if(value == null) {
+                value = new ArrayList<>();
+            }
 
-    public LanguageCategory getCommands() {
-        int index = this.languageManager.getIndex(CommandMessages.COMMAND_ACCESSED_BY);
-
-        return this.commands;
-    }
-
-    public LanguageCategory getGui() {
-        return this.gui;
+            this.stringLists.put(path, MessageUtils.colorStringList(this.getPlugin(), value));
+        }
+        return value;
     }
 }

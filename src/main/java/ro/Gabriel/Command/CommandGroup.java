@@ -27,6 +27,7 @@ public class CommandGroup extends BukkitCommandGroup {
 
     @Override
     public boolean execute(MinecraftUser user, String commandLabel, String[] args) {
+        System.out.println("s-a incercat cautarea comenzii in pluginul: " + getPlugin());
         CustomCommand c = this.commands.stream().filter(command -> command.verifyMatching(args)).findFirst().orElse(null);
 
         if(c != null) {
@@ -72,7 +73,6 @@ public class CommandGroup extends BukkitCommandGroup {
         StringBuilder commands = new StringBuilder();
 
         CommandUtils.getCommandsByArgs(args, this).forEach(cmd -> {
-
             String description = language.getString(LanguageCategoryType.COMMANDS, "commands." + this.getName() + "." + cmd.getId() + ".description");
 
             commands.append(language.getString(CommandMessages.COMMAND_HELP_FORMAT)
@@ -81,6 +81,7 @@ public class CommandGroup extends BukkitCommandGroup {
                     .replace("%description%", DataDefaultValues.equals(description, String.class) ? cmd.getDescription() : description)
             ).append("\n");
         });
+
         return MessageUtils.colorString(
                 this.getPlugin().getConfigManager().isCommandsMessagesFromMainPlugin() ? this.getPlugin().getBasePluginInstance() : this.getPlugin(),
                 commands.toString()

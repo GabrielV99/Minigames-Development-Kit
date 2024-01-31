@@ -1,8 +1,9 @@
 package ro.Gabriel.Language.Impl;
 
-import ro.Gabriel.Language.Categories.LanguageCategoryType;
-import ro.Gabriel.Language.LanguagePath;
+import ro.Gabriel.Main.Minigame;
 import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
+import ro.Gabriel.Language.LanguageCategory;
+import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Language.Language;
 
 import java.util.ArrayList;
@@ -10,18 +11,8 @@ import java.util.List;
 
 public class FailedLanguage extends Language {
 
-    public FailedLanguage() {
-        super("failed");
-    }
-
-    @Override
-    public Object get(LanguagePath path) {
-        return new Object();
-    }
-
-    @Override
-    public Object get(LanguageCategoryType category, String path) {
-        return new Object();
+    public FailedLanguage(Minigame plugin) {
+        super(plugin, "failed");
     }
 
     @Override
@@ -30,7 +21,7 @@ public class FailedLanguage extends Language {
     }
 
     @Override
-    public String getString(LanguageCategoryType category, String path) {
+    public String getString(LanguageCategory category, String path) {
         return DataDefaultValues.get(String.class);
     }
 
@@ -40,7 +31,7 @@ public class FailedLanguage extends Language {
     }
 
     @Override
-    public List<String> getStringList(LanguageCategoryType category, String path) {
+    public List<String> getStringList(LanguageCategory category, String path) {
         return new ArrayList<>();
     }
 }

@@ -1,23 +1,26 @@
 package ro.Gabriel.Language;
 
+import ro.Gabriel.Class.ClassScanner;
+import ro.Gabriel.Class.ClassUtils;
 import ro.Gabriel.Class.Validators.LanguageCategoryValidator;
+import ro.Gabriel.Placeholder.Placeholder;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
 import ro.Gabriel.Language.Impl.GeneralLanguage;
 import ro.Gabriel.Messages.MessageManager;
 import ro.Gabriel.Main.Config.FilePath;
 import ro.Gabriel.Managers.Manager;
 import ro.Gabriel.Main.Minigame;
+import ro.Gabriel.Storage.DefaultValues.DataDefaultValues;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class LanguageManager implements Manager {
 
     private final Minigame plugin;
     private final Map<String, Language> registeredLanguages;
-    private final List<Class<? extends LanguagePath>> languageCategories;
+    private List<LanguageCategory> languageCategories;
 
     private final MessageManager messageManager;
 
@@ -32,7 +35,17 @@ public class LanguageManager implements Manager {
     public LanguageManager(Minigame plugin) {
         this.plugin = plugin;
         this.registeredLanguages = new HashMap<>();
-        this.languageCategories = plugin.searchClasses(LanguageCategoryValidator.class, LanguagePath.class);
+        this.languageCategories = new ArrayList<>();
+
+        ClassScanner.getAllTypeClassesByPlugin(plugin, clazz -> clazz.isEnum() && clazz.getEnumConstants().length > 0, LanguagePath.class)
+                .forEach(clazz -> languageCategories.add(clazz.getEnumConstants()[0]));
+
+        ClassScanner.getAllTypeClassesByPlugin(plugin, clazz -> clazz.isEnum() && clazz.getEnumConstants().length > 0, LanguageCategory.class)
+                .forEach(clazz -> languageCategories.addAll(Arrays.asList(clazz.getEnumConstants())));
+
+        this.languageCategories = new ArrayList<>(languageCategories.stream()
+                .collect(Collectors.toMap(LanguageCategory::getStoragePath, Function.identity(), (existing, replacement) -> existing))
+                .values());
 
         this.categoryExtension = (!categoryExtension.contains(".") ? "." : "") + categoryExtension;
 
@@ -43,7 +56,10 @@ public class LanguageManager implements Manager {
         this.alwaysDefaultLanguage = plugin.getConfigManager().getValue(config, "always-default-language", false);
         this.hoverMessageBounded = plugin.getConfigManager().getValue(config, "hover-message-bounded", "%hm%");
 
-        // aici trebuie sa adaug toate categoriile pentru fiecare locale, si continutul acelei categorii(stringuri si liste de string)
+        // aici trebuie sa adaug in fisiere toate categoriile pentru fiecare locale, si continutul acelei categorii(stringuri si liste de string)
+        this.languageCategories.forEach(category -> {
+
+        });
 
         this.messageManager = new MessageManager(plugin, config);
 
@@ -59,30 +75,57 @@ public class LanguageManager implements Manager {
         return this.messageManager;
     }
 
-    public List<Class<? extends LanguagePath>> getCategories() {
+    public List<LanguageCategory> getCategories() {
         return this.languageCategories;
     }
 
-    public int getIndex(LanguagePath languagePath) {
-        for (int i = 0; i < this.languageCategories.size(); i++) {
-            if(this.languageCategories.get(i) == languagePath.getClass()) {
-                return i;
-            }
-        }
-
-        return 0;
-    }
-
-    public Class<? extends LanguagePath> getCategory(String id) {
-        Class<? extends LanguagePath> category;
-        for(int i = 0; i < this.getCategories().size(); i++) {
-            category = this.getCategories().get(i);
-            if(LanguagePath.getLanguageId(category).equals(id)) {
-                return category;
+    public LanguageCategory getCategory(String id) {
+        for (LanguageCategory languageCategory : this.languageCategories) {
+            if (languageCategory.getId().equals(id)) {
+                return languageCategory;
             }
         }
         return null;
     }
+
+    @SuppressWarnings("unchecked")
+    public LanguagePath getPath(LanguageCategory category, String path) {
+        LanguagePath languagePath = null;
+
+        if(category instanceof LanguagePath && ClassUtils.isEnum(category.getClass())) {
+            languagePath = ClassUtils.getEnumValue(((Class<LanguagePath>)category.getClass()), path);
+        } else {
+            int count = 0;
+            Collection<Language> registeredLanguages = this.registeredLanguages.values();
+            for(Language language : registeredLanguages) {
+                count += !language.getString(category, path).equals(DataDefaultValues.get(String.class)) ? 1 : 0;
+            }
+
+            if(count == registeredLanguages.size()) {
+                languagePath = new LanguagePath() {
+                    @Override
+                    public String getPath() {
+                        return path;
+                    }
+
+                    @Override
+                    public Placeholder<?> getPlaceholder() { return null; }
+
+                    @Override
+                    public String getStoragePath() {
+                        return category.getStoragePath();
+                    }
+                };
+            }
+        }
+
+        return languagePath;
+    }
+    public LanguagePath getPath(String category, String path) {
+        LanguageCategory languageCategory = this.getCategory(category);
+        return languageCategory != null ? this.getPath(languageCategory, path) : null;
+    }
+
 
     public Language getLanguage(String locale) {
         if(locale == null || !this.availableLocales.contains(locale)) {

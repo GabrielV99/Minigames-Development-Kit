@@ -2,6 +2,10 @@ package ro.Gabriel.Main;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import ro.Gabriel.Language.Categories.CommandMessages;
+import ro.Gabriel.Language.Categories.LanguageCategoryType;
+import ro.Gabriel.Language.LanguageCategory;
+import ro.Gabriel.Language.LanguagePath;
 import ro.Gabriel.Listener.ListenerManager;
 import ro.Gabriel.Managers.ManagersProcessor;
 import ro.Gabriel.Misc.ReflectionUtils;
@@ -28,7 +32,6 @@ public final class MinigamesDevelopmentKit extends Minigame {
 
     public void onEnable() {
         //System.out.println("MainThreadID: " + Thread.currentThread().getId());
-
         INSTANCE = this;
 
         this.log("&aStart plugin...");

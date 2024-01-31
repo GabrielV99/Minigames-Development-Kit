@@ -5,6 +5,8 @@ import org.bukkit.command.CommandMap;
 
 import ro.Gabriel.Class.Validators.CommandGroupValidator;
 import ro.Gabriel.Command.Annotations.CommandClass;
+import ro.Gabriel.Language.Categories.LanguageCategoryType;
+import ro.Gabriel.Messages.HoverText;
 import ro.Gabriel.Storage.DataStorage.DataStorage;
 import ro.Gabriel.Misc.ReflectionUtils;
 import ro.Gabriel.Main.Minigame;
@@ -56,7 +58,14 @@ public class CommandManager {
                     ReflectionUtils.setValue(customCommand, CustomCommand.class, true, "clickable", isClickable);
 
                     if(isClickable) {
-                        plugin.getLanguageManager().getMessageManager().addHoverText(commandClass.id(), (commandGroup.getUsage() + groupId + " " + syntax), "commands." + groupId + "." + commandClass.id() + ".hover-text", commandGroup.getUsage() + groupId + " " + syntax, !CommandUtils.isParametricCommand(syntax));
+                        plugin.getLanguageManager().getMessageManager().addHoverText(
+                                commandClass.id(),
+                                (commandGroup.getUsage() + groupId + " " + syntax),
+                                "commands." + groupId + "." + commandClass.id() + ".hover-text",
+                                commandGroup.getUsage() + groupId + " " + syntax,
+                                LanguageCategoryType.COMMANDS,
+                                !CommandUtils.isParametricCommand(syntax)
+                        );
                     }
 
                     ReflectionUtils.setValue(customCommand, CustomCommand.class, true, "args", syntax.replace((commandGroup.getUsage() + groupId + " "), "").split(" "));

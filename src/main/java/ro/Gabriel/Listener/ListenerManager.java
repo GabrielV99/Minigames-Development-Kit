@@ -159,7 +159,6 @@ public class ListenerManager implements Manager {
 
         if(!listenerEventType.equals(CustomPlayerEvent.class) & ClassUtils.extendsClass(listenerEventType, PlayerEvent.class) & !plugin.isBasePlugin()) {
             plugin.log("&cUnable to register &6" + listenerClass.getSimpleName() + " &6listener because contain PlayerEvent type. You can use &aCustom" + listenerEventType.getSimpleName() + " &6instead for your listener...");
-            //minigame.log("&cUnable to register &6" + listenerEventType.getSimpleName() + " &6listener. You can use &aCustom" + listenerEventType.getSimpleName() + " &6instead...");
             return;
         }
 
